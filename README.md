@@ -33,9 +33,28 @@ Raspberry Pi 5 (RP1 칩) 전용 PIO 기반 QSPI 통신 구현
 
 ## 빌드 및 실행
 
+### 빌드 방법
 ```bash
-# 빌드
+# 프로젝트 빌드 (CMake 사용)
 make
+
+# 또는 수동 빌드
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### 실행 방법
+```bash
+# cnt_pio 예제 실행 (안정적)
+sudo ./cnt_pio
+
+# qspi_test 예제 실행 (개발 중)
+sudo ./qspi_test
+
+# gpio_test 예제 실행
+sudo ./gpio_test
 
 # 클럭 테스트 (10초)
 make run
@@ -44,10 +63,25 @@ make run
 make run-w5500
 ```
 
+## 예제 설명
+
+### cnt_pio (안정적 예제)
+- **기능**: GPIO 13-15에 3비트 카운터 출력 (7→6→...→0 반복)
+- **PIO 프로그램**: FIFO 기반으로 데이터 입력받아 감소시키면서 출력
+- **사용법**: 로직 애널라이저로 GPIO 13-15 확인, 0.1초마다 카운터 반복
+- **코드**: `src/cnt_pio.c` – PIO 명령어 직접 구현
+
+### qspi_test (개발 중 예제)
+- **기능**: QSPI Quad 모드 데이터 전송 테스트
+- **PIO 프로그램**: `wizchip_qspi_pio.pio` 기반, GPIO 0-3에 4비트 출력
+- **사용법**: GPIO 0-3, CS(4), CLK(5) 확인
+- **코드**: `src/qspi_test.c` – PIO 어셈블리어 레벨 사용
+
 ## 현재 상태
 
 - **클럭 생성**: clock_pio 레퍼런스 기반으로 완성
 - **프로젝트 구조**: Makefile, CMake 빌드 시스템 준비
+- **안정적 예제**: cnt_pio – PIO 기본 동작 확인 가능
 - **다음 단계**: 데이터 전송 PIO 프로그램 구현
 
 ## 참고
