@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/cnt_pio.dir/src/cnt_pio.c.o -o cnt_pio  utils/piolib/build/libpio.a 

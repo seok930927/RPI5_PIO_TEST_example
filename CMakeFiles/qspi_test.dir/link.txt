@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/qspi_test.dir/src/qspi_test.c.o -o qspi_test  utils/piolib/build/libpio.a 
