@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/lihan/pio_qspi/qspi_pio/utils/piolib/include -I/home/lihan/pio_qspi/qspi_pio/include -I/home/lihan/pio_qspi/qspi_pio/..
+C_INCLUDES = -I/home/lihan/pio_qspi/qspi_pio/include
 
 C_FLAGS = -Wall -Wextra -std=gnu11
 

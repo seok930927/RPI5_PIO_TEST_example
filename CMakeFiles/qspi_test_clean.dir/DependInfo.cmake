@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.c" "CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o" "gcc" "CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o.d"
-  "/home/lihan/pio_qspi/qspi_pio/src/qspi_test.c" "CMakeFiles/qspi_test.dir/src/qspi_test.c.o" "gcc" "CMakeFiles/qspi_test.dir/src/qspi_test.c.o.d"
+  "/home/lihan/pio_qspi/qspi_pio/src/qspi_test_clean.c" "CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.o" "gcc" "CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.o.d"
   )
 
 # Targets to which this target links.

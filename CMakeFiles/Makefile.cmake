@@ -44,5 +44,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/qspi_test.dir/DependInfo.cmake"
+  "CMakeFiles/qspi_test_clean.dir/DependInfo.cmake"
   "CMakeFiles/cnt_pio.dir/DependInfo.cmake"
   )

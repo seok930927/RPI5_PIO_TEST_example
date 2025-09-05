@@ -1,4 +1,5 @@
 /home/lihan/pio_qspi/qspi_pio/CMakeFiles/qspi_test.dir
+/home/lihan/pio_qspi/qspi_pio/CMakeFiles/qspi_test_clean.dir
 /home/lihan/pio_qspi/qspi_pio/CMakeFiles/cnt_pio.dir
 /home/lihan/pio_qspi/qspi_pio/CMakeFiles/edit_cache.dir
 /home/lihan/pio_qspi/qspi_pio/CMakeFiles/rebuild_cache.dir
