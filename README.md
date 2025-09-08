@@ -88,3 +88,17 @@ make run-w5500
 
 - 기반 프로젝트: `/clock_pio` (절대 수정 금지)
 - PIOLib 의존성: `../utils/piolib`
+
+
+---
+# Commit d179216
+- QSPI 통신 파형 TEST
+- QSPI 를 위한 (PIO 코드 -> HEX코드) 검증
+- 
+<img width="717" height="568" alt="image" src="https://github.com/user-attachments/assets/a023c2fe-19ab-44a1-8f36-29e32af4a3d1" />
+
+## 다음 STEP
+- DMA
+- QSPI 송신 수신  함수 작성
+
+
