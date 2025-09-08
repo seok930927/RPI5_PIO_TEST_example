@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
     int sm;
     pio_sm_config c;
     uint offset;
-    int gpio_base = 20;  // QSPI 핀: GPIO 20부터 시작 (4비트: 20-23)  
+    int gpio_base = 7;  // QSPI 핀: GPIO 20부터 시작 (4비트: 20-23)  
     int gpio_cs = 16;    // CS 핀 (BCM 번호)
     int gpio_clk = 12;   // CLK 핀
 
@@ -314,47 +314,83 @@ int main(int argc, char *argv[]) {
 
     // 기본 설정 가져오기
     c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset, offset + 9);  // wrap 설정 (상수로 고정)
+    sm_config_set_wrap(&c, offset, offset + 8);  // wrap 설정 (상수로 고정)
 
     // Quad SPI를 위한 추가 설정
     sm_config_set_out_pins(&c, gpio_base, 4);    // 데이터 핀: GPIO 20-23
     sm_config_set_in_pins(&c, gpio_base);        // 입력 핀
     sm_config_set_set_pins(&c, gpio_base, 4);    // set pins도 데이터 핀으로 설정
-    sm_config_set_clkdiv(&c, 50);               // 더 빠른 클럭으로 변경 (2.5MHz)
+    sm_config_set_clkdiv(&c, 250);               // 더 빠른 클럭으로 변경 (2.5MHz)
 
     sm_config_set_sideset(&c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&c, gpio_clk);    // CLK 핀 설정
 
-    // 데이터/CLK 핀은 PIO가 방향 제어
+  sm_config_set_in_shift(&c, true, true, 8);
+  sm_config_set_out_shift(&c, true, true, 8);
+
+
+
+
+    // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
+    printf("\r\n[QSPI QUAD MODE]\r\n");
+    
+    // PIO 기능으로 GPIO 핀 설정
     for (int i = 0; i < 4; i++) {
         pio_gpio_init(pio, gpio_base + i);
-        pio_sm_set_consecutive_pindirs(pio, sm, gpio_base + i, 1, false);
     }
     pio_gpio_init(pio, gpio_clk);
+    
+    // 핀 방향 설정 (출력으로)
+    pio_sm_set_consecutive_pindirs(pio, sm, gpio_base, 4, true);
     pio_sm_set_consecutive_pindirs(pio, sm, gpio_clk, 1, true);
+    
+    // 데이터 핀 풀다운 및 슈미트 트리거 활성화
+    for (int i = 0; i < 4; i++) {
+        gpio_set_pulls(gpio_base + i, true, true);
+        gpio_set_input_enabled(gpio_base + i, true);
+    }
+
+    
     pio_sm_init(pio, sm, offset, &c);
 
-    // FIFO 클리어
-    pio_sm_clear_fifos(pio, sm);
-    printf("FIFO 클리어 완료\n");
-
-    printf("QSPI Quad 데이터 전송 시작 (GPIO 20-23, CLK 12, CS 16)...\n");
-    printf("로직 애널라이저로 GPIO 20-23, CLK(12), CS(16) 확인하세요!\n");
-
+    
     // 테스트 데이터 패턴들  
     uint8_t test_patterns[][8] = {
-        {0x03, 0x00, 0x00, 0x00},           // Read command
-        {0x0B, 0x00, 0x10, 0x00},           // Fast read
-        {0x02, 0x00, 0x20, 0xAA},           // Write command  
-        {0x9F},                             // Read ID
+        {0xFF, 0xFF, 0x00, 0x00},           // Read command
+        {0xFF, 0x00, 0x10, 0x00},           // Fast read
+        {0xFF, 0x00, 0x20, 0xAA},           // Write command  
+        {0xFF},                             // Read ID
         {0xFF, 0x00, 0x55, 0xAA},           // Pattern test
-        {0x6B, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78}  // Quad read with data
+        {0xFF, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78}  // Quad read with data
     };
     
     size_t pattern_lengths[] = {4, 4, 4, 1, 4, 8};
     int pattern_count = sizeof(test_patterns) / sizeof(test_patterns[0]);
     int pattern_index = 0;
+    // FIFO 클리어
+    pio_sm_clear_fifos(pio, sm);
+    // 데이터 패턴 길이에 맞게 x 레지스터(니블 단위) 자동 설정
+    size_t nibble_count = pattern_lengths[0] * 2; // 첫 패턴 기준, 필요시 루프 내에서 변경
+    pio_sm_exec(pio, sm, pio_encode_set(pio_x, nibble_count - 1));
+    pio_sm_exec(pio, sm, pio_encode_jmp(offset + 0)); // wrap_target으로
 
+    printf("FIFO 클리어 완료\n");
+
+    printf("QSPI Quad 데이터 전송 시작 (GPIO 20-23, CLK 12, CS 16)...\n");
+    printf("로직 애널라이저로 GPIO 20-23, CLK(12), CS(16) 확인하세요!\n");
+
+
+  pio_sm_set_enabled(pio, sm, true);
+
+    // for (int i = 0xffff; i > 0; i--) {
+    // // 데이터 전송 (각 바이트별로)
+    //     pio_sm_put_blocking(pio, sm, i );
+    //     printf("TX[%zu]", i);
+    //     usleep(1000);
+    // }
+    //     usleep(1000000);
+    //     usleep(1000000);
+    //     usleep(1000000);
     // QSPI 테스트 루프
     while (keep_running) {
         uint8_t *pattern = test_patterns[pattern_index];
@@ -376,29 +412,37 @@ int main(int argc, char *argv[]) {
         pio_sm_clear_fifos(pio, sm);
         
         // 핀 방향을 출력으로 설정 (Quad 모드)
-        uint32_t pin_mask = (1u << gpio_base) | (1u << (gpio_base+1)) | 
-        (1u << (gpio_base+2)) | (1u << (gpio_base+3));
-        pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
-        
+        // uint32_t pin_mask = (1u << gpio_base) | (1u << (gpio_base+1)) | 
+        // (1u << (gpio_base+2)) | (1u << (gpio_base+3));
+        // pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
+        static uint32_t data00 = 0 ; 
+
+
+        pio_sm_put(pio, sm, 0x5A  );
+        pio_sm_put(pio, sm, 0xf0  );
+        pio_sm_put(pio, sm, 0x5A  );
+
+ 
+
         // PIO 재시작
         pio_sm_restart(pio, sm);
         pio_sm_clkdiv_restart(pio, sm);
 
+        // x 레지스터 설정 (비트 수 - 1)
+        pio_sm_exec(pio, sm, pio_encode_set(pio_x, 7));     // set으로 변경
+        pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));     // 고정값으로 
         pio_sm_set_enabled(pio, sm, true);
         
-        // x 레지스터 설정 (비트 수 - 1)
-pio_sm_exec(pio, sm, pio_encode_set(pio_x, 7));     // set으로 변경
-pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));     // 고정값으로 
+
 
         // PIO 프로그램 시작점으로 점프
-        // pio_sm_exec(pio, sm, pio_encode_jmp(offset));
+        pio_sm_exec(pio, sm, pio_encode_jmp(offset));
    
         // SM 활성화
-        for (size_t i = 0; i < length; i++) {
-        // 데이터 전송 (각 바이트별로)
-            pio_sm_put(pio, sm, pattern[i]);
-            printf("TX[%zu]: 0x%02X\n", i, pattern[i]);
-        }
+        // for (size_t i = 0; i < length; i++) {
+        // // 데이터 전송 (각 바이트별로)
+           
+        // }
 
         // 잠시 대기
         usleep(100);
