@@ -363,14 +363,30 @@ int main(int argc, char *argv[]) {
     //     {0xFF, 0x00, 0x55, 0xAA},           // Pattern test
     //     {0xFF, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78,0x34, 0x56,0xFF, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78,0x34, 0x56, 0x78,0x34, 0x56, 0x78,0x34, 0x56, 0x78}  // Quad read with data
     // };
-     uint8_t test_patterns[32] =    {0x88, 0xff, 0xff, 0xff, 
-                                    0x02, 0xFF, 0xff, 0xff,
+     uint8_t test_patterns[80] =    {0x88, 0xff, 0xff, 0xff, 
+                                    0x03, 0xFF, 0xff, 0xff,
                                     0xff, 0x56, 0x78,0x34, 
                                     0x56,0xff, 0x00, 0x00, 
                                     0xff, 0x12, 0x34, 0x56,
                                     0x78,0x34, 0x56, 0x78,
                                     0x34, 0x56, 0x78,0x34,
                                     0x34, 0x56, 0x78,0x34,
+                                    0x88, 0xff, 0xff, 0xff, 
+                                    0x03, 0xFF, 0xff, 0xff,
+                                    0xff, 0x56, 0x78,0x34, 
+                                    0x56,0xff, 0x00, 0x00, 
+                                    0xff, 0x12, 0x34, 0x56,
+                                    0x78,0x34, 0x56, 0x78,
+                                    0x34, 0x56, 0x78,0x34,
+                                    0x34, 0x56, 0x78,0x34,
+                                    0x88, 0xff, 0xff, 0xff, 
+                                    0x03, 0xFF, 0xff, 0xff,
+                                    0xff, 0x56, 0x78,0x34, 
+                                    0x56,0xff, 0x00, 0x00, 
+                                    0xff, 0x12, 0x34, 0x56,
+                                    0x78,0x34, 0x56, 0x78,
+                                    0x34, 0x56, 0x78,0x34,
+                                    0x34, 0x56, 0x78,0x34
                                     } ; // Quad read with data
      uint32_t test_patterns2[9] =    {0x88ffffff, 
                                     0x0202ffff,
@@ -428,11 +444,14 @@ int main(int argc, char *argv[]) {
         pio_sm_restart(pio, sm);
         pio_sm_clkdiv_restart(pio, sm);
         // 🔧 올바른 x 레지스터 설정: 9개 워드 = 36바이트 = 72니블
-        size_t total_bytes = sizeof(test_patterns);  // 36바이트
-        size_t nibble_count = total_bytes * 2;       // 72니블 (Quad 모드)
-        pio_sm_exec(pio, sm, pio_encode_set(pio_x, nibble_count - 1));  // 71
-        
-     
+        size_t send_size = 32;
+        size_t total_bytes = send_size ; 
+        size_t nibble_count = send_size * 2;       // 72니블 (Quad 모드)
+        //  pio_sm_exec(pio, sm, pio_encode_set(pio_x, ((nibble_count *4)- 1) ));  // 71
+        pio_sm_put_blocking(pio, sm, 0x00008FFF);               // TX FIFO <= 값
+        pio_sm_exec(pio, sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+        pio_sm_exec(pio, sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
+            
         
         // 🔧 DMA 설정: 9개 워드, 4바이트 단위
         pio_sm_set_enabled(pio, sm, true);                 
@@ -443,7 +462,14 @@ int main(int argc, char *argv[]) {
         pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
         pio_sm_exec(pio, sm, pio_encode_pull(false, true));
         
-        int sent = pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 16, test_patterns); 
+        int sent = pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 80, test_patterns); 
+        
+
+        
+        // pio_sm_exec(pio, sm, pio_encode_set(pio_x, (8 * 2*4 - 1) ));  // 71
+        // pio_sm_clear_fifos(pio, sm);
+
+        // pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 8, test_patterns+8); 
        
         // pio_sm_clear_fifos(pio, sm);
         // pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
@@ -456,7 +482,7 @@ int main(int argc, char *argv[]) {
         // printf("보낸 바이트 수: %d\n", sent);
 
         // 잠시 대기
-        usleep(10000);
+        usleep(200);
         
         // SM 비활성화
         pio_sm_set_enabled(pio, sm, false);
