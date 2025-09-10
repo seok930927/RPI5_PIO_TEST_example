@@ -443,7 +443,7 @@ int main(int argc, char *argv[]) {
         pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
         pio_sm_exec(pio, sm, pio_encode_pull(false, true));
         
-        int sent = pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 8, test_patterns); 
+        int sent = pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 16, test_patterns); 
        
         // pio_sm_clear_fifos(pio, sm);
         // pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
