@@ -162,7 +162,7 @@ static int qspi_pio_setup(qspi_test_state_t *state) {
     
     // 시프트 설정
     sm_config_set_in_shift(&c, false, true, 8);   // MSB first, autopush at 8 bits
-    sm_config_set_out_shift(&c, false, true, 8);  // MSB first, autopull at 8 bits
+    // sm_config_set_out_shift(&c, true, , 8);  // MSB first, autopull at 8 bits
     
     // 클럭 분주 설정 (원본 참조)
     float clkdiv = (float)state->spi_config->clock_div_major + 
@@ -325,8 +325,8 @@ int main(int argc, char *argv[]) {
     sm_config_set_sideset(&c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&c, gpio_clk);    // CLK 핀 설정
 
-  sm_config_set_in_shift(&c, true, true, 8);
-  sm_config_set_out_shift(&c, true, true, 8);
+  sm_config_set_in_shift(&c, true, true, 16);
+  sm_config_set_out_shift(&c, true, true, 32 );
 
 
 
@@ -339,11 +339,11 @@ int main(int argc, char *argv[]) {
         pio_gpio_init(pio, gpio_base + i);
     }
     pio_gpio_init(pio, gpio_clk);
-    
     // 핀 방향 설정 (출력으로)
     pio_sm_set_consecutive_pindirs(pio, sm, gpio_base, 4, true);
     pio_sm_set_consecutive_pindirs(pio, sm, gpio_clk, 1, true);
-    
+
+
     // 데이터 핀 풀다운 및 슈미트 트리거 활성화
     for (int i = 0; i < 4; i++) {
         gpio_set_pulls(gpio_base + i, true, true);
@@ -355,32 +355,41 @@ int main(int argc, char *argv[]) {
 
     
     // 테스트 데이터 패턴들  
-    uint8_t test_patterns[][8] = {
-        {0xFF, 0xFF, 0x00, 0x00},           // Read command
-        {0xFF, 0x00, 0x10, 0x00},           // Fast read
-        {0xFF, 0x00, 0x20, 0xAA},           // Write command  
-        {0xFF},                             // Read ID
-        {0xFF, 0x00, 0x55, 0xAA},           // Pattern test
-        {0xFF, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78}  // Quad read with data
-    };
-    
+    // uint8_t test_patterns[][8] = {
+    //     {0xFF, 0xFF, 0x00, 0x00},           // Read command
+    //     {0xFF, 0x00, 0x10, 0x00},           // Fast read
+    //     {0xFF, 0x00, 0x20, 0xAA},           // Write command  
+    //     {0xFF},                             // Read ID
+    //     {0xFF, 0x00, 0x55, 0xAA},           // Pattern test
+    //     {0xFF, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78,0x34, 0x56,0xFF, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78,0x34, 0x56, 0x78,0x34, 0x56, 0x78,0x34, 0x56, 0x78}  // Quad read with data
+    // };
+     uint8_t test_patterns[32] =    {0x88, 0xff, 0xff, 0xff, 
+                                    0x02, 0xFF, 0xff, 0xff,
+                                    0xff, 0x56, 0x78,0x34, 
+                                    0x56,0xff, 0x00, 0x00, 
+                                    0xff, 0x12, 0x34, 0x56,
+                                    0x78,0x34, 0x56, 0x78,
+                                    0x34, 0x56, 0x78,0x34,
+                                    0x34, 0x56, 0x78,0x34,
+                                    } ; // Quad read with data
+     uint32_t test_patterns2[9] =    {0x88ffffff, 
+                                    0x0202ffff,
+                                    0xff567834, 
+                                    0x56ff0000, 
+                                    0x00123456,
+                                    0x78345678,
+                                    0x34ff5678,
+                                    0x34ff5678,
+                                    0x56010101} ; // Quad read with data
     size_t pattern_lengths[] = {4, 4, 4, 1, 4, 8};
     int pattern_count = sizeof(test_patterns) / sizeof(test_patterns[0]);
-    int pattern_index = 0;
-    // FIFO 클리어
-    pio_sm_clear_fifos(pio, sm);
-    // 데이터 패턴 길이에 맞게 x 레지스터(니블 단위) 자동 설정
-    size_t nibble_count = pattern_lengths[0] * 2; // 첫 패턴 기준, 필요시 루프 내에서 변경
-    pio_sm_exec(pio, sm, pio_encode_set(pio_x, nibble_count - 1));
-    pio_sm_exec(pio, sm, pio_encode_jmp(offset + 0)); // wrap_target으로
-
+   
+    // pio_sm_set_enabled(pio, sm, true);
     printf("FIFO 클리어 완료\n");
 
     printf("QSPI Quad 데이터 전송 시작 (GPIO 20-23, CLK 12, CS 16)...\n");
     printf("로직 애널라이저로 GPIO 20-23, CLK(12), CS(16) 확인하세요!\n");
 
-
-  pio_sm_set_enabled(pio, sm, true);
 
     // for (int i = 0xffff; i > 0; i--) {
     // // 데이터 전송 (각 바이트별로)
@@ -393,15 +402,8 @@ int main(int argc, char *argv[]) {
     //     usleep(1000000);
     // QSPI 테스트 루프
     while (keep_running) {
-        uint8_t *pattern = test_patterns[pattern_index];
-        size_t length = pattern_lengths[pattern_index];
         
-        printf("\n--- 패턴 %d: ", pattern_index + 1);
-        for (size_t i = 0; i < length; i++) {
-            printf("0x%02X ", pattern[i]);
-        }
-        printf("(%zu bytes) ---\n", length);
-        
+
         // CS low (칩 선택)
         gpiod_line_set_value(cs_line, 0);
 
@@ -415,37 +417,46 @@ int main(int argc, char *argv[]) {
         // uint32_t pin_mask = (1u << gpio_base) | (1u << (gpio_base+1)) | 
         // (1u << (gpio_base+2)) | (1u << (gpio_base+3));
         // pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
-        static uint32_t data00 = 0 ; 
 
 
-        pio_sm_put(pio, sm, 0x5A  );
-        pio_sm_put(pio, sm, 0xf0  );
-        pio_sm_put(pio, sm, 0x5A  );
 
- 
+        
+
+        // 헤더 바이트들(command_buf, command_len)을 DMA 경로로 PIO TX로 보냄
 
         // PIO 재시작
         pio_sm_restart(pio, sm);
         pio_sm_clkdiv_restart(pio, sm);
-
-        // x 레지스터 설정 (비트 수 - 1)
-        pio_sm_exec(pio, sm, pio_encode_set(pio_x, 7));     // set으로 변경
-        pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));     // 고정값으로 
-        pio_sm_set_enabled(pio, sm, true);
+        // 🔧 올바른 x 레지스터 설정: 9개 워드 = 36바이트 = 72니블
+        size_t total_bytes = sizeof(test_patterns);  // 36바이트
+        size_t nibble_count = total_bytes * 2;       // 72니블 (Quad 모드)
+        pio_sm_exec(pio, sm, pio_encode_set(pio_x, nibble_count - 1));  // 71
         
+     
+        
+        // 🔧 DMA 설정: 9개 워드, 4바이트 단위
+        pio_sm_set_enabled(pio, sm, true);                 
+        pio_sm_clear_fifos(pio, sm);
+
+        pio_sm_config_xfer(pio, sm, PIO_DIR_TO_SM, 512, 1);  // 9개, 4바이트 단위
+
+        pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
+        pio_sm_exec(pio, sm, pio_encode_pull(false, true));
+        
+        int sent = pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 8, test_patterns); 
+       
+        // pio_sm_clear_fifos(pio, sm);
+        // pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));
+       
+        //  pio_sm_xfer_data(pio, sm, PIO_DIR_TO_SM, 8, test_patterns); 
 
 
-        // PIO 프로그램 시작점으로 점프
-        pio_sm_exec(pio, sm, pio_encode_jmp(offset));
-   
-        // SM 활성화
-        // for (size_t i = 0; i < length; i++) {
-        // // 데이터 전송 (각 바이트별로)
-           
-        // }
+        // // pio_sm_exec(pio, sm, pio_encode_set(pio_y, 0));     // 고정값으로 
+     
+        // printf("보낸 바이트 수: %d\n", sent);
 
         // 잠시 대기
-        usleep(100);
+        usleep(10000);
         
         // SM 비활성화
         pio_sm_set_enabled(pio, sm, false);
@@ -454,7 +465,6 @@ int main(int argc, char *argv[]) {
         gpiod_line_set_value(cs_line, 1);
 
         // 다음 패턴으로 순환
-        pattern_index = (pattern_index + 1) % pattern_count;
 
         usleep(100);
 
