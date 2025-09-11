@@ -28,53 +28,55 @@
 #define _WIZCHIP_QSPI_MODE_ QSPI_QUAD_MODE
 
 
+struct pio_struct_Lihan{
+    PIO pio;
+    int sm;
+    pio_sm_config c;
+    uint offset;    
+}pio_struct;
+
 static volatile int keep_running = 1;
 
-    // QSPI 테스트 루프
-void signal_handler(int sig) {
-    (void)sig;
-    printf("\n시그널 받음, 종료 중...\n");
-    keep_running = 0;
-}
+void signal_handler(int sig);
 
 
-    uint8_t test_patterns[80] =    {
-                                    0x88, 0xff, 0xff, 0xff, 
-                                    0x03, 0xFF, 0xff, 0xff,
-                                    0xff, 0x56, 0x78,0x34, 
-                                    0x56,0xff, 0x00, 0x00, 
-                                    0xff, 0x12, 0x34, 0x56,
-                                    0x78,0x34, 0x56, 0x78,
-                                    0x34, 0x56, 0x78,0x34,
-                                    0x34, 0x56, 0x78,0x34,
-                                    0x88, 0xff, 0xff, 0xff, 
-                                    0x03, 0xFF, 0xff, 0xff,
-                                    0xff, 0x56, 0x78,0x34, 
-                                    0x56,0xff, 0x00, 0x00, 
-                                    0xff, 0x12, 0x34, 0x56,
-                                    0x78,0x34, 0x56, 0x78,
-                                    0x34, 0x56, 0x78,0x34,
-                                    0x34, 0x56, 0x78,0x34,
-                                    0x88, 0xff, 0xff, 0xff, 
-                                    0x03, 0xFF, 0xff, 0xff,
-                                    0xff, 0x56, 0x78,0x34, 
-                                    0x56,0xff, 0x00, 0x00, 
-                                    0xff, 0x12, 0x34, 0x56,
-                                    0x78,0x34, 0x56, 0x78,
-                                    0x34, 0x56, 0x78,0x34,
-                                    0x34, 0x56, 0x78,0x34
-                                    } ; // Quad read with data
-    uint32_t test_patterns2[9] =    {
-                                    0x88ffffff, 
-                                    0x0202ffff,
-                                    0xff567834, 
-                                    0x56ff0000, 
-                                    0x00123456,
-                                    0x78345678,
-                                    0x34ff5678,
-                                    0x34ff5678,
-                                    0x56010101
-                                    } ; // Quad read with data
+uint8_t test_patterns[80] =    {
+                                0x88, 0xff, 0xff, 0xff, 
+                                0x03, 0xFF, 0xff, 0xff,
+                                0xff, 0x56, 0x78,0x34, 
+                                0x56,0xff, 0x00, 0x00, 
+                                0xff, 0x12, 0x34, 0x56,
+                                0x78,0x34, 0x56, 0x78,
+                                0x34, 0x56, 0x78,0x34,
+                                0x34, 0x56, 0x78,0x34,
+                                0x88, 0xff, 0xff, 0xff, 
+                                0x03, 0xFF, 0xff, 0xff,
+                                0xff, 0x56, 0x78,0x34, 
+                                0x56,0xff, 0x00, 0x00, 
+                                0xff, 0x12, 0x34, 0x56,
+                                0x78,0x34, 0x56, 0x78,
+                                0x34, 0x56, 0x78,0x34,
+                                0x34, 0x56, 0x78,0x34,
+                                0x88, 0xff, 0xff, 0xff, 
+                                0x03, 0xFF, 0xff, 0xff,
+                                0xff, 0x56, 0x78,0x34, 
+                                0x56,0xff, 0x00, 0x00, 
+                                0xff, 0x12, 0x34, 0x56,
+                                0x78,0x34, 0x56, 0x78,
+                                0x34, 0x56, 0x78,0x34,
+                                0x34, 0x56, 0x78,0x34
+                                } ; // Quad read with data
+uint32_t test_patterns2[9] =    {
+                                0x88ffffff, 
+                                0x0202ffff,
+                                0xff567834, 
+                                0x56ff0000, 
+                                0x00123456,
+                                0x78345678,
+                                0x34ff5678,
+                                0x34ff5678,
+                                0x56010101
+                                } ; // Quad read with data
 
 struct gpiod_line *cs_pin_init(struct gpiod_chip *chip) {
     // struct gpiod_chip *chip;
@@ -94,13 +96,6 @@ struct gpiod_line *cs_pin_init(struct gpiod_chip *chip) {
     }
     return cs_line;
 }
-
-struct pio_struct_Lihan{
-    PIO pio;
-    int sm;
-    pio_sm_config c;
-    uint offset;    
-}pio_struct;
 
 void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     // PIO 초기화
@@ -128,7 +123,7 @@ void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
     sm_config_set_in_pins(&pioStruct->c, QSPI_DATA_IO0_PIN);        // 입력 핀
     sm_config_set_set_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // set pins도 데이터 핀으로 설정
-    sm_config_set_clkdiv(&pioStruct->c, 5);               // 더 빠른 클럭으로 변경 (2.5MHz)
+    sm_config_set_clkdiv(&pioStruct->c, CLKDIV);               // 더 빠른 클럭으로 변경 (2.5MHz)
 
     sm_config_set_sideset(&pioStruct->c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
@@ -253,4 +248,10 @@ int main(int argc, char *argv[]) {
     printf("완료\n");
     return 0;
 
+}
+// Main While loop 종료 핸들러
+void signal_handler(int sig) {
+    (void)sig;
+    printf("\n시그널 받음, 종료 중...\n");
+    keep_running = 0;
 }
