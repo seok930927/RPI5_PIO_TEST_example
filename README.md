@@ -114,8 +114,11 @@ make run-w5500
 
 
 ## 다음 STEP
-- DMA
 - QSPI 송신 수신  함수 작성
-
+- W6300 TEST
+- IoLibrary 연동
+- TOE performance  측정
+- Linux QSPI(using PIO) 드라이버 작성
+- Linux W6300 드라이버 작성 
 
 
