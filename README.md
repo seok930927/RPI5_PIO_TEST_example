@@ -97,8 +97,25 @@ make run-w5500
 - 
 <img width="717" height="568" alt="image" src="https://github.com/user-attachments/assets/a023c2fe-19ab-44a1-8f36-29e32af4a3d1" />
 
+
+# commit 869d17f
+ 
+## DMA 기능 추가하여 신호 생성 TEST
+
+<img width="788" height="439" alt="image" src="https://github.com/user-attachments/assets/8a737872-4701-4a47-a542-34afdb2191c2" />
+
+## W6300 SPI Frame TEST
+- Datesheet
+<img width="573" height="259" alt="image" src="https://github.com/user-attachments/assets/7ec57b74-e686-478c-88f3-795d522a5d03" />
+
+- Raspberry Pi 5 signal
+<img width="699" height="464" alt="image" src="https://github.com/user-attachments/assets/31c7430c-5199-4927-85f0-df53c125bd16" />
+
+
+
 ## 다음 STEP
 - DMA
 - QSPI 송신 수신  함수 작성
+
 
 
