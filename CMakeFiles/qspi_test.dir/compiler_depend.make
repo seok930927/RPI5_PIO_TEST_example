@@ -16,6 +16,7 @@ CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: include/wizchip_qspi_
   /usr/include/aarch64-linux-gnu/bits/long-double.h \
   /usr/include/aarch64-linux-gnu/gnu/stubs.h \
   /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h \
+  /usr/include/inttypes.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
@@ -26,8 +27,6 @@ CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: include/wizchip_qspi_
   /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
   /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
-  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
-  /usr/include/inttypes.h \
   utils/piolib/include/hardware/clocks.h \
   utils/piolib/include/hardware/gpio.h \
   utils/piolib/include/pio_platform.h
@@ -151,12 +150,12 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: src/qspi_test.c \
   utils/piolib/include/piolib.h \
   utils/piolib/include/pio_platform.h \
   /usr/include/assert.h \
+  /usr/include/inttypes.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/aarch64-linux-gnu/bits/wchar.h \
   /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
-  /usr/include/inttypes.h \
   utils/piolib/include/hardware/clocks.h \
   utils/piolib/include/hardware/gpio.h \
   utils/piolib/include/pio_platform.h \
@@ -298,6 +297,10 @@ utils/piolib/include/hardware/pio.h:
 
 /usr/include/aarch64-linux-gnu/sys/procfs.h:
 
+/usr/include/inttypes.h:
+
+/usr/include/asm-generic/bitsperlong.h:
+
 /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h:
 
 /usr/include/aarch64-linux-gnu/bits/types/sigset_t.h:
@@ -313,10 +316,6 @@ include/wizchip_qspi_pio.pio.h:
 /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h:
 
 /usr/include/aarch64-linux-gnu/bits/procfs-id.h:
-
-/usr/include/inttypes.h:
-
-/usr/include/asm-generic/bitsperlong.h:
 
 /usr/include/aarch64-linux-gnu/bits/pthreadtypes.h:
 

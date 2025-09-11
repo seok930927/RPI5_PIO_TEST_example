@@ -39,10 +39,15 @@ static volatile int keep_running = 1;
 
 void signal_handler(int sig);
 
+static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf,
+                                        uint8_t *databuf, 
+                                        uint8_t opcode, 
+                                        uint16_t rag_addr,  
+                                        uint16_t len_byte) ;
 
 uint8_t test_patterns[80] =    {
-                                0x88, 0xff, 0xff, 0xff, 
-                                0x03, 0xFF, 0xff, 0xff,
+                                0x1, 0x2, 0x3, 0x4, 
+                                0xFF, 0xFF, 0xff, 0xff,
                                 0xff, 0x56, 0x78,0x34, 
                                 0x56,0xff, 0x00, 0x00, 
                                 0xff, 0x12, 0x34, 0x56,
@@ -129,7 +134,7 @@ void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
 
     sm_config_set_in_shift(&pioStruct->c, true, true, 16);
-    sm_config_set_out_shift(&pioStruct->c, true, true, 32);
+    sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -174,7 +179,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t l
                 // X레지스터 길이 지정 - X는  Max loop count        
 
         #if 0
-        //  pio_sm_exec(pio, sm, pio_encode_set(pio_x, ((nibble_count *4)- 1) ));  // 71
+        //  pio_sm_exec(pio, sm, pio_encode_set(pio_x, ((nibble_count)- 1) ));  // 71
         //⚠️pio_encode_set() = 최대 31까지만 가능.
         #else
         pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0x00008FFF);               // TX FIFO <= 값
@@ -224,8 +229,13 @@ int main(int argc, char *argv[]) {
         //DMA buffer 설정
         pio_sm_config_xfer(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 512, 1);  // 9개, 4바이트 단위
         //Dma 버퍼에 데이터 전송
-        int sent = pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 80, test_patterns);
+        uint8_t cmd_data_buf[500];
+        uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
+        printf("Data Length to send = %d\n", dataLen);
+
+        int sent = pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 84, cmd_data_buf); // len은 4의배수만되네..
         
+
         usleep(200);
         
         // SM 비활성화
@@ -254,4 +264,58 @@ void signal_handler(int sig) {
     (void)sig;
     printf("\n시그널 받음, 종료 중...\n");
     keep_running = 0;
+}
+
+
+
+static uint16_t mk_cmd_buf(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
+#if (_WIZCHIP_QSPI_MODE_ == QSPI_SINGLE_MODE)
+
+    pdst[0] = opcode;
+    pdst[1] = (uint8_t)((addr >> 8) & 0xFF);
+    pdst[2] = (uint8_t)((addr >> 0) & 0xFF);
+    pdst[3] = 0;
+
+    return 3 + 1;
+#elif (_WIZCHIP_QSPI_MODE_ == QSPI_DUAL_MODE)
+    pdst[0] = ((opcode >> 7 & 0x01) << 6) | ((opcode >> 6 & 0x01) << 4) | ((opcode >> 5 & 0x01) << 2) | ((opcode >> 4 & 0x01) << 0);
+    pdst[1] = ((opcode >> 3 & 0x01) << 6) | ((opcode >> 2 & 0x01) << 4) | ((opcode >> 1 & 0x01) << 2) | ((opcode >> 0 & 0x01) << 0);
+    pdst[2] = (uint8_t)((addr >> 8) & 0xFF);
+    pdst[3] = (uint8_t)((addr >> 0) & 0xFF);
+
+    pdst[4] = 0;
+
+    return 4 + 1;
+#elif (_WIZCHIP_QSPI_MODE_ == QSPI_QUAD_MODE)
+    pdst[0] = ((opcode >> 7 & 0x01) << 4) | ((opcode >> 6 & 0x01) << 0);
+    pdst[1] = ((opcode >> 5 & 0x01) << 4) | ((opcode >> 4 & 0x01) << 0);
+    pdst[2] = ((opcode >> 3 & 0x01) << 4) | ((opcode >> 2 & 0x01) << 0);
+    pdst[3] = ((opcode >> 1 & 0x01) << 4) | ((opcode >> 0 & 0x01) << 0);
+
+    pdst[4] = ((uint8_t)(addr >> 8) & 0xFF);
+    pdst[5] = ((uint8_t)(addr >> 0) & 0xFF);
+
+    pdst[6] = 0;
+
+    return 6 + 1;
+#endif
+    return 0;
+}
+
+
+
+
+
+static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf, 
+                                        uint8_t *databuf, 
+                                        uint8_t opcode, 
+                                        uint16_t rag_addr,  
+                                        uint16_t len_byte) {
+
+
+    uint16_t cmd_len =   mk_cmd_buf(outbuf, opcode, rag_addr);
+
+   memcpy(outbuf + cmd_len, databuf,len_byte );
+
+    return cmd_len + len_byte;
 }

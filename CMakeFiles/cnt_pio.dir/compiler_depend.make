@@ -105,12 +105,12 @@ CMakeFiles/cnt_pio.dir/src/cnt_pio.c.o: src/cnt_pio.c \
   utils/piolib/include/piolib.h \
   utils/piolib/include/pio_platform.h \
   /usr/include/assert.h \
+  /usr/include/inttypes.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/aarch64-linux-gnu/bits/wchar.h \
   /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
   /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
-  /usr/include/inttypes.h \
   utils/piolib/include/hardware/clocks.h \
   utils/piolib/include/hardware/gpio.h \
   utils/piolib/include/pio_platform.h

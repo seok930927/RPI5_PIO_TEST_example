@@ -104,11 +104,11 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /usr/include/strings.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/piolib.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/pio_platform.h \
- /usr/include/assert.h /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
- /usr/include/stdint.h /usr/include/aarch64-linux-gnu/bits/wchar.h \
+ /usr/include/assert.h /usr/include/inttypes.h \
+ /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
+ /usr/include/aarch64-linux-gnu/bits/wchar.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
- /usr/include/inttypes.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/hardware/clocks.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/hardware/gpio.h \
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/pio_platform.h \
