@@ -12,136 +12,7 @@
 // wiznet_spi_write_read //
 // --------------------- //
 
-#define wiznet_spi_write_read_wrap_target 0
-#define wiznet_spi_write_read_wrap 8
-#define wiznet_spi_write_read_pio_version 0
 
-#define wiznet_spi_write_read_offset_write_bits 0u
-#define wiznet_spi_write_read_offset_write_end 3u
-#define wiznet_spi_write_read_offset_read_end 9u
-
-static const uint16_t wiznet_spi_write_read_program_instructions[] = {
-            //     .wrap_target
-    0x6001, //  0: out    pins, 1         side 0
-    0x1040, //  1: jmp    x--, 0          side 1
-    0xe000, //  2: set    pins, 0         side 0
-    0xe080, //  3: set    pindirs, 0      side 0
-    0xf026, //  4: set    x, 6            side 1
-    0x4001, //  5: in     pins, 1         side 0
-    0x1045, //  6: jmp    x--, 5          side 1
-    0x4001, //  7: in     pins, 1         side 0
-    0x0084, //  8: jmp    y--, 4          side 0
-            //     .wrap
-};
-
-#if !PICO_NO_HARDWARE
-static const struct pio_program wiznet_spi_write_read_program = {
-    .instructions = wiznet_spi_write_read_program_instructions,
-    .length = 9,
-    .origin = -1,
-    .pio_version = wiznet_spi_write_read_pio_version,
-#if PICO_PIO_VERSION > 0
-    .used_gpio_ranges = 0x0
-#endif
-};
-
-static inline pio_sm_config wiznet_spi_write_read_program_get_default_config(uint offset) {
-    pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + wiznet_spi_write_read_wrap_target, offset + wiznet_spi_write_read_wrap);
-    sm_config_set_sideset(&c, 1, false, false);
-    return c;
-}
-#endif
-
-// --------------------------------- //
-// wizchip_pio_spi_single_write_read //
-// --------------------------------- //
-
-#define wizchip_pio_spi_single_write_read_wrap_target 0
-#define wizchip_pio_spi_single_write_read_wrap 8
-#define wizchip_pio_spi_single_write_read_pio_version 0
-
-#define wizchip_pio_spi_single_write_read_offset_write_bits 0u
-#define wizchip_pio_spi_single_write_read_offset_write_bits_end 3u
-#define wizchip_pio_spi_single_write_read_offset_read_bits_end 9u
-
-static const uint16_t wizchip_pio_spi_single_write_read_program_instructions[] = {
-            //     .wrap_target
-    0x6001, //  0: out    pins, 1         side 0
-    0x1040, //  1: jmp    x--, 0          side 1
-    0xe000, //  2: set    pins, 0         side 0
-    0xe080, //  3: set    pindirs, 0      side 0
-    0xf026, //  4: set    x, 6            side 1
-    0x4001, //  5: in     pins, 1         side 0
-    0x1045, //  6: jmp    x--, 5          side 1
-    0x4001, //  7: in     pins, 1         side 0
-    0x0084, //  8: jmp    y--, 4          side 0
-            //     .wrap
-};
-
-#if !PICO_NO_HARDWARE
-static const struct pio_program wizchip_pio_spi_single_write_read_program = {
-    .instructions = wizchip_pio_spi_single_write_read_program_instructions,
-    .length = 9,
-    .origin = -1,
-    .pio_version = wizchip_pio_spi_single_write_read_pio_version,
-#if PICO_PIO_VERSION > 0
-    .used_gpio_ranges = 0x0
-#endif
-};
-
-static inline pio_sm_config wizchip_pio_spi_single_write_read_program_get_default_config(uint offset) {
-    pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + wizchip_pio_spi_single_write_read_wrap_target, offset + wizchip_pio_spi_single_write_read_wrap);
-    sm_config_set_sideset(&c, 1, false, false);
-    return c;
-}
-#endif
-
-// ------------------------------- //
-// wizchip_pio_spi_dual_write_read //
-// ------------------------------- //
-
-#define wizchip_pio_spi_dual_write_read_wrap_target 0
-#define wizchip_pio_spi_dual_write_read_wrap 8
-#define wizchip_pio_spi_dual_write_read_pio_version 0
-
-#define wizchip_pio_spi_dual_write_read_offset_write_bits 0u
-#define wizchip_pio_spi_dual_write_read_offset_write_bits_end 3u
-#define wizchip_pio_spi_dual_write_read_offset_read_bits_end 9u
-
-static const uint16_t wizchip_pio_spi_dual_write_read_program_instructions[] = {
-            //     .wrap_target
-    0x6002, //  0: out    pins, 2         side 0
-    0x1040, //  1: jmp    x--, 0          side 1
-    0xe000, //  2: set    pins, 0         side 0
-    0xe080, //  3: set    pindirs, 0      side 0
-    0xf022, //  4: set    x, 2            side 1
-    0x4002, //  5: in     pins, 2         side 0
-    0x1045, //  6: jmp    x--, 5          side 1
-    0x4002, //  7: in     pins, 2         side 0
-    0x0084, //  8: jmp    y--, 4          side 0
-            //     .wrap
-};
-
-#if !PICO_NO_HARDWARE
-static const struct pio_program wizchip_pio_spi_dual_write_read_program = {
-    .instructions = wizchip_pio_spi_dual_write_read_program_instructions,
-    .length = 9,
-    .origin = -1,
-    .pio_version = wizchip_pio_spi_dual_write_read_pio_version,
-#if PICO_PIO_VERSION > 0
-    .used_gpio_ranges = 0x0
-#endif
-};
-
-static inline pio_sm_config wizchip_pio_spi_dual_write_read_program_get_default_config(uint offset) {
-    pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + wizchip_pio_spi_dual_write_read_wrap_target, offset + wizchip_pio_spi_dual_write_read_wrap);
-    sm_config_set_sideset(&c, 1, false, false);
-    return c;
-}
-#endif
 
 // ------------------------------- //
 // wizchip_pio_spi_quad_write_read //
@@ -155,22 +26,24 @@ static inline pio_sm_config wizchip_pio_spi_dual_write_read_program_get_default_
 #define wizchip_pio_spi_quad_write_read_offset_read_bits_end 9u
 
 static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
+   //     .wrap_target
     /* 0 */ 0x6004,  // out   pins, 4          side 0
-    /* 1 */ 0x1040,  // jmp   x--, 0           side 1   ; write_bits로 루프
+    /* 1 */ 0x1040,  // jmp   x--, 0           side 1   ; X 루프
     /* 2 */ 0xE000,  // set   pins, 0          side 0
     /* 3 */ 0xE080,  // set   pindirs, 0       side 0
     /* 4 */ 0xF021,  // set   x, 1             side 1
     /* 5 */ 0x4004,  // in    pins, 4          side 0
-    /* 6 */ 0x1045,  // jmp   x--, 5           side 1   ; read_bits로 루프
-    /* 7 */ 0x4004,  // in    pins, 4          side 0
-    /* 8 */ 0x0084,  // jmp   y--, 4           side 0   ; read_byte
+    /* 6 */ 0x1045,  // jmp   x--, 5           side 1   ; Y 루프 시작점
+    /* 7 */ 0x4005,  // in    pins, 4          side 0
+    /* 8 */ 0x0084,  // jmp   y--, 4           side 1   ; Y 루프 (클럭 토글 추가)
+    /* 9 */ 0x1028,  // jmp   y--, 8           side 0   ; X 루프 종료 시 Y 루프로 이동
 };
 
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program wizchip_pio_spi_quad_write_read_program = {
     .instructions = wizchip_pio_spi_quad_write_read_program_instructions,
-    .length = 9,
+    .length = 10,
     .origin = -1,
     .pio_version = wizchip_pio_spi_quad_write_read_pio_version,
 #if PICO_PIO_VERSION > 0
