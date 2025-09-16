@@ -122,7 +122,7 @@ void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
     // 기본 설정 가져오기
     pioStruct->c = pio_get_default_sm_config();
-    sm_config_set_wrap(&pioStruct->c, pioStruct->offset, pioStruct->offset + 9);  // wrap 설정 (상수로 고정)
+    sm_config_set_wrap(&pioStruct->c, pioStruct->offset, pioStruct->offset + 8);  // wrap 설정 (상수로 고정)
 
     // Quad SPI를 위한 추가 설정
     sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
@@ -207,7 +207,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t l
 
 
         // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm,1 );               // TX FIFO <= 값
+        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (16*2) -1 );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
     printf("CS 핀 , PIO 초기화 완료\n");
 
     uint8_t tx_buf[16];
-    uint8_t rx_buf[128];
+    uint8_t rx_buf[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};  ;
 
     while (keep_running) {
         // CS low (칩 선택)
@@ -265,13 +265,13 @@ int main(int argc, char *argv[]) {
         printf("Data Length to send = %d\n", dataLen);
 
         int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 16 , test_patterns); // len은 4의배수만되네..
-                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 1 , rx_buf); // len은 4의배수만되네..
+                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 16 , rx_buf); // len은 4의배수만되네..
+
 
 
         for(int i=0; i<16; i++) {
-            printf("%02X ", test_patterns[i]);
+            printf("%02X ", rx_buf[i]);
         }
-
         usleep(200);
         
         // SM 비활성화

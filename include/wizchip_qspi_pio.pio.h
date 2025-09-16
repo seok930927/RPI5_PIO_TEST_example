@@ -36,14 +36,14 @@ static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
     /* 6 */ 0x1045,  // jmp   x--, 5           side 1   ; Y 루프 시작점
     /* 7 */ 0x4005,  // in    pins, 4          side 0
     /* 8 */ 0x0084,  // jmp   y--, 4           side 1   ; Y 루프 (클럭 토글 추가)
-    /* 9 */ 0x1028,  // jmp   y--, 8           side 0   ; X 루프 종료 시 Y 루프로 이동
+    // /* 9 */ 0x0000,  // jmp   y--, 8           side 0   ; X 루프 종료 시 Y 루프로 이동
 };
 
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program wizchip_pio_spi_quad_write_read_program = {
     .instructions = wizchip_pio_spi_quad_write_read_program_instructions,
-    .length = 10,
+    .length = 9,
     .origin = -1,
     .pio_version = wizchip_pio_spi_quad_write_read_pio_version,
 #if PICO_PIO_VERSION > 0
