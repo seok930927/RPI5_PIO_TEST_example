@@ -25,6 +25,7 @@
 #define wizchip_pio_spi_quad_write_read_offset_write_bits_end 3u
 #define wizchip_pio_spi_quad_write_read_offset_read_bits_end 9u
 
+#if 0
 static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
    //     .wrap_target
     /* 0 */ 0x6004,  // out   pins, 4          side 0
@@ -37,13 +38,28 @@ static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
     /* 7 */ 0x4005,  // in    pins, 4          side 0
     /* 8 */ 0x0084,  // jmp   y--, 4           side 1   ; Y 루프 (클럭 토글 추가)
     // /* 9 */ 0x0000,  // jmp   y--, 8           side 0   ; X 루프 종료 시 Y 루프로 이동
+
 };
+#else
+static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
+//     .wrap_target
+    /* 0 */ 0x6004,  
+    /* 1 */ 0x1040,  
+    /* 2 */ 0xE000,  
+    /* 3 */ 0xE080,  
+    /* 4 */ 0xF021,  
+    /* 5 */ 0x4004, 
+    /* 6 */ 0x0084, 
+    /* 7 */ 0x0000,  // nop (루프 종료용)
+
+};
+#endif 
 
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program wizchip_pio_spi_quad_write_read_program = {
     .instructions = wizchip_pio_spi_quad_write_read_program_instructions,
-    .length = 9,
+    .length = 8,
     .origin = -1,
     .pio_version = wizchip_pio_spi_quad_write_read_pio_version,
 #if PICO_PIO_VERSION > 0
