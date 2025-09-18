@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
         // // printf("Data Length to send = %d\n", dataLen);
 
         int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 8, test_patterns); // len은 4의배수만되네..
-                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 16 , rx_buf); // len은 4의배수만되네..
+                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 7 , rx_buf); // len은 4의배수만되네..
 
 
 // 4일떄 18번 니블   8 8 2 
