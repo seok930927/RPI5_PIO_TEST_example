@@ -263,8 +263,10 @@ int main(int argc, char *argv[]) {
         uint32_t tx_size = 7; // 7*4 = 28바이트
         uint32_t rx_size = 16; // 16*4 = 64바이트
         // CS low (칩 선택)
+
         gpiod_line_set_value(cs_line, 0);
 
+        #if 0 
         pio_init_lihan(&pio_struct, true, tx_size , rx_size ); // 80바이트 전송 준비
 
 
@@ -273,7 +275,9 @@ int main(int argc, char *argv[]) {
             printf("SM XFER DATA ERROR\n");
         }
         pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, rx_size*4 ,rx_buf); 
-
+#else
+wiznet_spi_pio_read_byte(0x10 , 0x00 , rx_buf, rx_size);
+#endif 
 
 
          for(int i=0; i<16; i++) {
@@ -314,10 +318,23 @@ void signal_handler(int sig) {
 
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
-    mk_cmd_buf(rx, 0x10, AddrSel);
+    uint32_t cmd = 0;
+    uint8_t cmd_size = mk_cmd_buf(cmd, 0x10, AddrSel);
     for(int i=0; i<16; i++) {
         printf("%08X ", rx[i]);
     }
+
+        pio_init_lihan(&pio_struct, true, cmd_size , rx_length ); // 80바이트 전송 준비
+
+
+        int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, cmd_size*4, cmd); // len은 4의배수만되네..
+        if (sent < 0) {
+            printf("SM XFER DATA ERROR\n");
+        }
+        pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, rx_length*4 ,rx); 
+
+
+
     // CS low (칩 선택)
     // gpiod_line_set_value(cs_line, 0);
 
