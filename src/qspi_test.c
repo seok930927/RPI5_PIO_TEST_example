@@ -45,7 +45,7 @@ static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf,
                                         uint16_t len_byte) ;
 
 uint32_t test_patterns[80] =    {
-                                0x10000000, 0x011000000, 0x00, 0x0,
+                                0x10000000, 0x0000000, 0x00, 0x0,
                                 0x00, 0x00, 0x00, 0x00,
                                 0x11, 0x20, 0x40, 0x80,
                                 0x00, 0x20, 0x40, 0x80,
@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
     printf("CS 핀 , PIO 초기화 완료\n");
 
     uint32_t cmdBuf[16] = {0,};
-    wiznet_spi_pio_read_byte(0xFF, 0x0000, cmdBuf, 64); // Quad Read 명령어
+    // wiznet_spi_pio_read_byte(0xFF, 0x0000, cmdBuf, 64); // Quad Read 명령어
 
 
     while (keep_running) {
@@ -266,9 +266,9 @@ int main(int argc, char *argv[]) {
 
         gpiod_line_set_value(cs_line, 0);
 
-        #if 0 
+        #if 0
         pio_init_lihan(&pio_struct, true, tx_size , rx_size ); // 80바이트 전송 준비
-
+printf("TX Size : %d, RX Size : %d\r\n", tx_size, rx_size);
 
         int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, tx_size*4, test_patterns); // len은 4의배수만되네..
         if (sent < 0) {
@@ -318,10 +318,10 @@ void signal_handler(int sig) {
 
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
-    uint32_t cmd = 0;
+    uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf(cmd, 0x10, AddrSel);
     for(int i=0; i<16; i++) {
-        printf("%08X ", rx[i]);
+        printf("%08X ", cmd[i]);
     }
 
         pio_init_lihan(&pio_struct, true, cmd_size , rx_length ); // 80바이트 전송 준비
