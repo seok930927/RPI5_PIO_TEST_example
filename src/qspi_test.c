@@ -45,11 +45,11 @@ static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf,
                                         uint16_t rag_addr,  
                                         uint16_t len_byte) ;
 
-uint8_t test_patterns[80] =    {
+uint32_t test_patterns[80] =    {
                                 0x01, 0x00, 0x00, 0x0,
                                 0x00, 0x00, 0x00, 0x00,
-                                0x10, 0x20, 0x40, 0x80,
-                                0x10, 0x20, 0x40, 0x80,
+                                0x11, 0x20, 0x40, 0x80,
+                                0x00, 0x20, 0x40, 0x80,
                                 0x1, 0x2, 0x4, 0x8,
                                 0x78,0x34, 0x56, 0x78,
                                 0x34, 0x56, 0x78,0x34,
@@ -133,8 +133,8 @@ void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset(&pioStruct->c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
 
-    sm_config_set_in_shift(&pioStruct->c, false, true,16);
-    sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 4바이트씩 shift
+    sm_config_set_in_shift(&pioStruct->c, false, true, 8);
+    sm_config_set_out_shift(&pioStruct->c, true, true, 8);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -199,7 +199,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t l
         gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
         gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
     }
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (8*2) -1  );               // TX FIFO <= 값
+        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (7*2) -1  );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
@@ -207,7 +207,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t l
 
 
         // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (16) -1 );               // TX FIFO <= 값
+        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (64) -1 );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
@@ -267,8 +267,8 @@ int main(int argc, char *argv[]) {
         // uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
         // // printf("Data Length to send = %d\n", dataLen);
 
-        int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 8, test_patterns); // len은 4의배수만되네..
-                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 7 , rx_buf); // len은 4의배수만되네..
+        int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 7*4, test_patterns); // len은 4의배수만되네..
+                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 64 , rx_buf); // len은 4의배수만되네..
 
 
 // 4일떄 18번 니블   8 8 2 
