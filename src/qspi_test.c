@@ -22,7 +22,7 @@
 #define QSPI_DUAL_MODE      2
 #define QSPI_QUAD_MODE      4
 
-#define CLKDIV             4
+#define CLKDIV             500
 // 현재 모드 설정
 #define _WIZCHIP_QSPI_MODE_ QSPI_QUAD_MODE
 
@@ -45,7 +45,7 @@ static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf,
                                         uint16_t len_byte) ;
 
 uint32_t test_patterns[80] =    {
-                                0x01, 0x00, 0x00, 0x0,
+                                0x10000000, 0x00, 0x00, 0x0,
                                 0x00, 0x00, 0x00, 0x00,
                                 0x11, 0x20, 0x40, 0x80,
                                 0x00, 0x20, 0x40, 0x80,
@@ -133,7 +133,7 @@ void pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
 
     sm_config_set_in_shift(&pioStruct->c, false, true, 8);
-    sm_config_set_out_shift(&pioStruct->c, true, true, 8);// 4바이트씩 shift
+    sm_config_set_out_shift(&pioStruct->c, false, true, 8);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
         //DMA buffer 설정
         //Dma 버퍼에 데이터 전송
         // uint8_t cmd_data_buf[500];
-        uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
+        // uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
         // // printf("Data Length to send = %d\n", dataLen);
 
         int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 7*4, test_patterns); // len은 4의배수만되네..
