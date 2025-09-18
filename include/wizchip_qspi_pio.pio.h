@@ -49,7 +49,7 @@ static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
     /* 3 */ 0xE080,  
     /* 4 */ 0xF021,  
     /* 5 */ 0x4004, 
-    /* 6 */ 0x0085, 
+    /* 6 */ 0x1085, 
     /* 7 */ 0x0000,  // nop (루프 종료용)
 
 };
