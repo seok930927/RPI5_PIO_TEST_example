@@ -22,8 +22,7 @@
 #define QSPI_DUAL_MODE      2
 #define QSPI_QUAD_MODE      4
 
-#define CLKDIV              1000    
-
+#define CLKDIV             4
 // 현재 모드 설정
 #define _WIZCHIP_QSPI_MODE_ QSPI_QUAD_MODE
 
@@ -207,7 +206,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t l
 
 
         // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (64) -1 );               // TX FIFO <= 값
+        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (16*2) -1 );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
@@ -249,13 +248,12 @@ int main(int argc, char *argv[]) {
     printf("CS 핀 , PIO 초기화 완료\n");
 
     uint8_t tx_buf[16];
-    uint16_t rx_buf[128] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};  ;
+    uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};  ;
 
     while (keep_running) {
         // CS low (칩 선택)
         gpiod_line_set_value(cs_line, 0);
 
-        
         pio_sm_config_xfer(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 512,2);  // 9개, 4바이트 단위
         pio_sm_config_xfer(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 512, 4);  // 9개, 4바이트 단위
 
@@ -264,20 +262,25 @@ int main(int argc, char *argv[]) {
         //DMA buffer 설정
         //Dma 버퍼에 데이터 전송
         // uint8_t cmd_data_buf[500];
-        // uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
+        uint16_t dataLen = mk_cmd_buf_include_data(cmd_data_buf, test_patterns, 0xaa, 0xBBBB, 80); // Quad Read 명령어와 주소 설정
         // // printf("Data Length to send = %d\n", dataLen);
 
         int sent =  pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_TO_SM, 7*4, test_patterns); // len은 4의배수만되네..
-                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 64 , rx_buf); // len은 4의배수만되네..
+                    pio_sm_xfer_data(pio_struct.pio, pio_struct.sm, PIO_DIR_FROM_SM, 16*4 ,rx_buf); 
+
+// 4일떄 18번 토글   8 8 2 
+//8일떄 20번  토들      8 8  4
+//12 22번     토글     8 8 6 
+// 16 26      토글      8 8 8
 
 
-// 4일떄 18번 니블   8 8 2 
-//8일떄 20번        8 8  4
-//12 22번          8 8 6 
-// 16 26            8 8 8
+// 1 x4 = 18
+//2x 4 = 20 
+//3 x 4 = 22
+//4 x4 = 24
 
          for(int i=0; i<16; i++) {
-             printf("%04X ", rx_buf[i]);
+             printf("%02X ", rx_buf[i]);
          }
          printf("\r\n");
         usleep(200);
