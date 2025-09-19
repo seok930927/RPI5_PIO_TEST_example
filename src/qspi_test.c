@@ -285,23 +285,23 @@ int main(int argc, char *argv[]) {
         // uint16_t ADDR = (uint16_t)((AddrSel & 0x00ffff00) >> 8 );
         // // WIZCHIP.IF.QSPI._read_qspi(opcode, ADDR, ret, 1);
         uint8_t opcode =  _W6300_SPI_WRITE_;
-        uint16_t ADDR =  0X2005;
+        uint16_t ADDR =  0X2104;
 
-        uint32_t test_value[16] = {0x80,};
+        uint32_t test_value[16] = {0x80000000,};
 
         gpiod_line_set_value(cs_line, 0);
         wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 1);
-        gpiod_line_set_value(cs_line, 1);
         usleep(200);
+        gpiod_line_set_value(cs_line, 1);
 
-        // gpiod_line_set_value(cs_line, 0);
+        gpiod_line_set_value(cs_line, 0);
         wiznet_spi_pio_write_byte(&pio_struct, _W6300_SPI_WRITE_, ADDR, test_value, 1);
-        // gpiod_line_set_value(cs_line, 1);
-        usleep(200);
+        gpiod_line_set_value(cs_line, 1);
+        usleep(100000);
         gpiod_line_set_value(cs_line, 0);
         wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 1);
         gpiod_line_set_value(cs_line, 1);
-        printf("QSPI READ @0x%04X : ", rx_buf[0]);
+        // printf("QSPI READ @0x%04X : ", rx_buf[0]);
 
 #if PRINT_DEBUG
          for(int i=0; i<16; i++) {
@@ -359,10 +359,11 @@ void wiznet_spi_pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_co
 
     uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
-
+    for(int i=0; i< 16; i++){
+        printf("cmd[%d] : %08X \r\n", i, cmd[i]);
+    }
 
     pio_init_lihan(pioStruct, true,  cmd_size , 0 );
-    printf("cmd_size %d \r\n", cmd_size);
 
     uint16_t sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, ( cmd_size  )*4, cmd );
     if (sent < 0) {
@@ -427,7 +428,7 @@ static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf,
 
     uint16_t cmd_len =   mk_cmd_buf(outbuf, opcode, rag_addr);
 
-   memcpy(outbuf + cmd_len, databuf,len_byte );
+   memcpy(outbuf + cmd_len, databuf,len_byte*4 );
                     printf("cmd_len %d, len_byte %d \r\n", cmd_len, len_byte);
     return cmd_len + len_byte;
 }
