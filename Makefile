@@ -174,32 +174,6 @@ qspi_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/build
 .PHONY : qspi_test/fast
 
-#=============================================================================
-# Target rules for targets named qspi_test_clean
-
-# Build rule for target.
-qspi_test_clean: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 qspi_test_clean
-.PHONY : qspi_test_clean
-
-# fast build rule for target.
-qspi_test_clean/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test_clean.dir/build.make CMakeFiles/qspi_test_clean.dir/build
-.PHONY : qspi_test_clean/fast
-
-#=============================================================================
-# Target rules for targets named cnt_pio
-
-# Build rule for target.
-cnt_pio: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cnt_pio
-.PHONY : cnt_pio
-
-# fast build rule for target.
-cnt_pio/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cnt_pio.dir/build.make CMakeFiles/cnt_pio.dir/build
-.PHONY : cnt_pio/fast
-
 include/wizchip_qspi_pio.pio.o: include/wizchip_qspi_pio.pio.c.o
 .PHONY : include/wizchip_qspi_pio.pio.o
 
@@ -223,30 +197,6 @@ include/wizchip_qspi_pio.pio.s: include/wizchip_qspi_pio.pio.c.s
 include/wizchip_qspi_pio.pio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.s
 .PHONY : include/wizchip_qspi_pio.pio.c.s
-
-src/cnt_pio.o: src/cnt_pio.c.o
-.PHONY : src/cnt_pio.o
-
-# target to build an object file
-src/cnt_pio.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cnt_pio.dir/build.make CMakeFiles/cnt_pio.dir/src/cnt_pio.c.o
-.PHONY : src/cnt_pio.c.o
-
-src/cnt_pio.i: src/cnt_pio.c.i
-.PHONY : src/cnt_pio.i
-
-# target to preprocess a source file
-src/cnt_pio.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cnt_pio.dir/build.make CMakeFiles/cnt_pio.dir/src/cnt_pio.c.i
-.PHONY : src/cnt_pio.c.i
-
-src/cnt_pio.s: src/cnt_pio.c.s
-.PHONY : src/cnt_pio.s
-
-# target to generate assembly for a file
-src/cnt_pio.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cnt_pio.dir/build.make CMakeFiles/cnt_pio.dir/src/cnt_pio.c.s
-.PHONY : src/cnt_pio.c.s
 
 src/qspi_test.o: src/qspi_test.c.o
 .PHONY : src/qspi_test.o
@@ -272,30 +222,6 @@ src/qspi_test.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/qspi_test.c.s
 .PHONY : src/qspi_test.c.s
 
-src/qspi_test_clean.o: src/qspi_test_clean.c.o
-.PHONY : src/qspi_test_clean.o
-
-# target to build an object file
-src/qspi_test_clean.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test_clean.dir/build.make CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.o
-.PHONY : src/qspi_test_clean.c.o
-
-src/qspi_test_clean.i: src/qspi_test_clean.c.i
-.PHONY : src/qspi_test_clean.i
-
-# target to preprocess a source file
-src/qspi_test_clean.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test_clean.dir/build.make CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.i
-.PHONY : src/qspi_test_clean.c.i
-
-src/qspi_test_clean.s: src/qspi_test_clean.c.s
-.PHONY : src/qspi_test_clean.s
-
-# target to generate assembly for a file
-src/qspi_test_clean.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test_clean.dir/build.make CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.s
-.PHONY : src/qspi_test_clean.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -308,21 +234,13 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... cnt_pio"
 	@echo "... qspi_test"
-	@echo "... qspi_test_clean"
 	@echo "... include/wizchip_qspi_pio.pio.o"
 	@echo "... include/wizchip_qspi_pio.pio.i"
 	@echo "... include/wizchip_qspi_pio.pio.s"
-	@echo "... src/cnt_pio.o"
-	@echo "... src/cnt_pio.i"
-	@echo "... src/cnt_pio.s"
 	@echo "... src/qspi_test.o"
 	@echo "... src/qspi_test.i"
 	@echo "... src/qspi_test.s"
-	@echo "... src/qspi_test_clean.o"
-	@echo "... src/qspi_test_clean.i"
-	@echo "... src/qspi_test_clean.s"
 .PHONY : help
 
 

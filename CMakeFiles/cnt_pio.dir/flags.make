@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/lihan/pio_qspi/qspi_pio/utils/piolib/include -I/home/lihan/pio_qspi/qspi_pio/include
 
-C_FLAGS = -Wall -Wextra -std=gnu11
+C_FLAGS = -std=gnu11
 

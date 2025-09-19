@@ -29,7 +29,7 @@
 
 
 
-#define CLKDIV         4
+#define CLKDIV         500
 // 현재 모드 설정
 #define _WIZCHIP_QSPI_MODE_ QSPI_QUAD_MODE
 
@@ -45,8 +45,15 @@ static volatile int keep_running = 1;
 
 static uint16_t mk_cmd_buf(uint32_t *pdst, uint8_t opcode, uint16_t addr) ;
 void signal_handler(int sig);
-void wiznet_spi_pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length);
-void wiznet_spi_pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);
+
+struct pio_struct_Lihan pio_struct ;
+
+void wiznet_spi_pio_read_byte( uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length);
+void wiznet_spi_pio_write_byte( uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);
+
+void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length);
+void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);
+
 static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf,
                                         uint32_t *databuf, 
                                         uint8_t opcode, 
@@ -253,13 +260,16 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
 
 int main(int argc, char *argv[]) {
+    uint16_t ADDR =  0X4138; //SiPR 
+    uint32_t test_value[16] = {0x12000000,0x48000000,0x12000000,0x48000000,};
+
+
     /* 강제종료를 막고 안전한 자원해제를 위함 */
     signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
     signal(SIGTERM, signal_handler);// 종료 시그널 처리 
     
     
     struct gpiod_chip *chip;
-    struct pio_struct_Lihan pio_struct ;
     // gpiod 초기화 (모든 핀을 libgpiod로 제어)
 
     struct gpiod_line *cs_line = cs_pin_init(chip);
@@ -273,30 +283,10 @@ int main(int argc, char *argv[]) {
 
     while (keep_running) {
 
-
-
-        uint32_t tx_size = 7; // 7*4 = 28바이트
-        uint32_t rx_size = 16; // 16*4 = 64바이트
-        // CS low (칩 선택)
-
-
-        uint32_t AddrSel = 0x00200580;
-        // uint8_t opcode = (uint8_t)((AddrSel & 0x000000FF)| (_W6300_SPI_READ_)|(_WIZCHIP_QSPI_MODE_));
-        // uint16_t ADDR = (uint16_t)((AddrSel & 0x00ffff00) >> 8 );
-        // // WIZCHIP.IF.QSPI._read_qspi(opcode, ADDR, ret, 1);
-        uint8_t opcode =  _W6300_SPI_WRITE_;
-
-        //ip setup
-        uint16_t ADDR =  0X4138; //SiPR 
-
-        uint32_t test_value[16] = {0x82000000,0x48000000,0x12000000,0x48000000,};
-        // uint32_t test_value[16] = {0x0,};
-
-
         /*write SIPR[0:4] */
         gpiod_line_set_value(cs_line, 0);
         usleep(100);
-        wiznet_spi_pio_write_byte(&pio_struct, _W6300_SPI_WRITE_, ADDR, test_value, 4);
+        wiznet_spi_pio_write_byte( _W6300_SPI_WRITE_, ADDR, test_value, 4);
         usleep(100);
         gpiod_line_set_value(cs_line, 1);
         usleep(100);
@@ -304,23 +294,20 @@ int main(int argc, char *argv[]) {
         /*Read SIPR[0:4] */
         gpiod_line_set_value(cs_line, 0);
         usleep(100);
-        wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 4);
+        wiznet_spi_pio_read_byte( _W6300_SPI_READ_, ADDR, rx_buf, 4);
         usleep(100);
         gpiod_line_set_value(cs_line, 1);
 
         /*verify result*/
-#if PRINT_DEBUG
+#if 1
          for(int i=0; i<16; i++) {
              printf("%02X ", rx_buf[i]);
          }
          printf("\r\n");
 #endif 
          
-        usleep(200);
 
-        // CS high (칩 선택 해제)
-        
-        
+        usleep(200);
     }
     
     printf("\n정리 중...\n");
@@ -342,7 +329,20 @@ void signal_handler(int sig) {
     keep_running = 0;
 }
 
-void wiznet_spi_pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
+
+void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length) {
+
+    pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
+
+}
+void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length) {
+
+    pio_write_byte(&pio_struct, op_code, AddrSel, tx, tx_length);
+
+}
+
+
+void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
     uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf(cmd, op_code, AddrSel);
@@ -361,7 +361,7 @@ void wiznet_spi_pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_cod
 }
 
 
-void wiznet_spi_pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
+void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
 
     uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
