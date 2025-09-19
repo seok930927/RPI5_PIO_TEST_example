@@ -113,12 +113,37 @@ make run-w5500
 
 
 
+# commit ed73350
+
+## Write / Read TEST
+-SIPR 레지스터에  IP 주소를 작성( IP = 12.48.12.48)
+
+<img width="530" height="524" alt="image" src="https://github.com/user-attachments/assets/72b29f6f-2af8-4ac4-8854-a8ec7545e944" />
+
+-SIPR 레지스터에 작성된 IP를 읽기( IP = 12.48.12.48)
+
+
+<img width="519" height="516" alt="image" src="https://github.com/user-attachments/assets/9801c13d-4829-4002-ab49-7f1948d2e2c6" />
+
+
+
+
+
+
+
 ## 다음 STEP
-- QSPI 송신 수신  함수 작성
-- W6300 TEST
 - IoLibrary 연동
+- loopback TEST
 - TOE performance  측정
 - Linux QSPI(using PIO) 드라이버 작성
 - Linux W6300 드라이버 작성 
 
+## 이슈 
+- DMA 이슈 - 32비트로 읽거나, 써줘야 정상적인 동작을 함
+ - 0x12 ,0x48, 0x12, 0x48를 쓰고 싶을떄
+ - DMA 에게 0x12000000, 0x48000000,0x12000000, 0x48000000 을 담아 주어야함.
+  
+- 클럭 수 불일치
+  - 읽기동작 후 1개의 비트가 추가적으로발생함.
+  - 읽기 동작을 하지않아도 클럭이 2회 발생함.
 
