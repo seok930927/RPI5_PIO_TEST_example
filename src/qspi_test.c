@@ -29,7 +29,7 @@
 
 
 
-#define CLKDIV             500
+#define CLKDIV         4
 // 현재 모드 설정
 #define _WIZCHIP_QSPI_MODE_ QSPI_QUAD_MODE
 
@@ -285,24 +285,30 @@ int main(int argc, char *argv[]) {
         // uint16_t ADDR = (uint16_t)((AddrSel & 0x00ffff00) >> 8 );
         // // WIZCHIP.IF.QSPI._read_qspi(opcode, ADDR, ret, 1);
         uint8_t opcode =  _W6300_SPI_WRITE_;
-        uint16_t ADDR =  0X2104;
 
-        uint32_t test_value[16] = {0x80000000,};
+        //ip setup
+        uint16_t ADDR =  0X4138; //SiPR 
 
+        uint32_t test_value[16] = {0x82000000,0x48000000,0x12000000,0x48000000,};
+        // uint32_t test_value[16] = {0x0,};
+
+
+        /*write SIPR[0:4] */
         gpiod_line_set_value(cs_line, 0);
-        wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 1);
-        usleep(200);
+        usleep(100);
+        wiznet_spi_pio_write_byte(&pio_struct, _W6300_SPI_WRITE_, ADDR, test_value, 4);
+        usleep(100);
+        gpiod_line_set_value(cs_line, 1);
+        usleep(100);
+
+        /*Read SIPR[0:4] */
+        gpiod_line_set_value(cs_line, 0);
+        usleep(100);
+        wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 4);
+        usleep(100);
         gpiod_line_set_value(cs_line, 1);
 
-        gpiod_line_set_value(cs_line, 0);
-        wiznet_spi_pio_write_byte(&pio_struct, _W6300_SPI_WRITE_, ADDR, test_value, 1);
-        gpiod_line_set_value(cs_line, 1);
-        usleep(100000);
-        gpiod_line_set_value(cs_line, 0);
-        wiznet_spi_pio_read_byte(&pio_struct, _W6300_SPI_READ_, ADDR, rx_buf, 1);
-        gpiod_line_set_value(cs_line, 1);
-        // printf("QSPI READ @0x%04X : ", rx_buf[0]);
-
+        /*verify result*/
 #if PRINT_DEBUG
          for(int i=0; i<16; i++) {
              printf("%02X ", rx_buf[i]);
@@ -359,9 +365,9 @@ void wiznet_spi_pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_co
 
     uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
-    for(int i=0; i< 16; i++){
-        printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-    }
+    // for(int i=0; i< 16; i++){
+    //     printf("cmd[%d] : %08X \r\n", i, cmd[i]);
+    // }
 
     pio_init_lihan(pioStruct, true,  cmd_size , 0 );
 
@@ -428,7 +434,7 @@ static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf,
 
     uint16_t cmd_len =   mk_cmd_buf(outbuf, opcode, rag_addr);
 
-   memcpy(outbuf + cmd_len, databuf,len_byte*4 );
-                    printf("cmd_len %d, len_byte %d \r\n", cmd_len, len_byte);
+    memcpy(outbuf + cmd_len, databuf,len_byte*4 );
+                    // printf("cmd_len %d, len_byte %d \r\n", cmd_len, len_byte);
     return cmd_len + len_byte;
 }
