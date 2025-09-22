@@ -13,6 +13,19 @@
 #include "pio_func.h"
 struct pio_struct_Lihan pio_struct; // <-- 이 줄 추가
 
+
+void convert32to8(const uint32_t *src, uint8_t *dst, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        dst[i] = (uint8_t)(src[i] & 0xFF);
+    }
+}
+void convert8to32(const uint8_t *src, uint32_t *dst, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        dst[i] = ((uint32_t)src[i] <<24);  // 상위 바이트는 자동으로 0
+    }
+}
+
+
 /* func */
 struct gpiod_line *cs_pin_init(struct gpiod_chip *chip) {
     // struct gpiod_chip *chip;
@@ -172,14 +185,24 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
 
 
-void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length) {
+void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length) {
 
+    // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
+    convert32to8(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
+
 
 }
-void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length) {
+void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
 
-    pio_write_byte(&pio_struct, op_code, AddrSel, tx, tx_length);
+    uint32_t tx_convert32[128] = {0,};
+    convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
+    for(int i=0; i< tx_length; i++){
+        printf("tx_length : %08x \r\n", tx_convert32[i]);
+    }
+    pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
+    // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
+
 
 }
 
@@ -188,7 +211,6 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
     uint32_t cmd[128] ={0,};
     uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
-
 
     pio_init_lihan(pioStruct, true, cmd_size, rx_length ); // 80바이트 전송 준비
 
@@ -205,7 +227,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
     uint32_t cmd[128] ={0,};
-
+    
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
     // for(int i=0; i< 16; i++){
     //     printf("cmd[%d] : %08X \r\n", i, cmd[i]);

@@ -9,6 +9,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.c" "CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o" "gcc" "CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o.d"
+  "/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o" "gcc" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o.d"
+  "/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/socket.c" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o" "gcc" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o.d"
+  "/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o" "gcc" "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o.d"
   "/home/lihan/pio_qspi/qspi_pio/src/pio_func.c" "CMakeFiles/qspi_test.dir/src/pio_func.c.o" "gcc" "CMakeFiles/qspi_test.dir/src/pio_func.c.o.d"
   "/home/lihan/pio_qspi/qspi_pio/src/qspi_test.c" "CMakeFiles/qspi_test.dir/src/qspi_test.c.o" "gcc" "CMakeFiles/qspi_test.dir/src/qspi_test.c.o.d"
   )

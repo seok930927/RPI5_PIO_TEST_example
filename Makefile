@@ -198,6 +198,78 @@ include/wizchip_qspi_pio.pio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.s
 .PHONY : include/wizchip_qspi_pio.pio.c.s
 
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.o: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.o
+
+# target to build an object file
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
+
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.i: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.i
+
+# target to preprocess a source file
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.i
+
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.s: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.s
+
+# target to generate assembly for a file
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.s
+
+lib/ioLibrary_Driver/Ethernet/socket.o: lib/ioLibrary_Driver/Ethernet/socket.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.o
+
+# target to build an object file
+lib/ioLibrary_Driver/Ethernet/socket.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.c.o
+
+lib/ioLibrary_Driver/Ethernet/socket.i: lib/ioLibrary_Driver/Ethernet/socket.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.i
+
+# target to preprocess a source file
+lib/ioLibrary_Driver/Ethernet/socket.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.c.i
+
+lib/ioLibrary_Driver/Ethernet/socket.s: lib/ioLibrary_Driver/Ethernet/socket.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.s
+
+# target to generate assembly for a file
+lib/ioLibrary_Driver/Ethernet/socket.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/socket.c.s
+
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.o: lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.o
+
+# target to build an object file
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o
+
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.i: lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.i
+
+# target to preprocess a source file
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.i
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.i
+
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.s: lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.s
+
+# target to generate assembly for a file
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s
+.PHONY : lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s
+
 src/pio_func.o: src/pio_func.c.o
 .PHONY : src/pio_func.o
 
@@ -262,6 +334,15 @@ help:
 	@echo "... include/wizchip_qspi_pio.pio.o"
 	@echo "... include/wizchip_qspi_pio.pio.i"
 	@echo "... include/wizchip_qspi_pio.pio.s"
+	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.o"
+	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.i"
+	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.s"
+	@echo "... lib/ioLibrary_Driver/Ethernet/socket.o"
+	@echo "... lib/ioLibrary_Driver/Ethernet/socket.i"
+	@echo "... lib/ioLibrary_Driver/Ethernet/socket.s"
+	@echo "... lib/ioLibrary_Driver/Ethernet/wizchip_conf.o"
+	@echo "... lib/ioLibrary_Driver/Ethernet/wizchip_conf.i"
+	@echo "... lib/ioLibrary_Driver/Ethernet/wizchip_conf.s"
 	@echo "... src/pio_func.o"
 	@echo "... src/pio_func.i"
 	@echo "... src/pio_func.s"

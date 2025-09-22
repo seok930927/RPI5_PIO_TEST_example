@@ -24,8 +24,8 @@ static uint16_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) 
 void signal_handler(int sig);
 
 
-void wiznet_spi_pio_read_byte( uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length);
-void wiznet_spi_pio_write_byte( uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);
+void wiznet_spi_pio_read_byte( uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length);
+void wiznet_spi_pio_write_byte( uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length);
 
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length);
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);

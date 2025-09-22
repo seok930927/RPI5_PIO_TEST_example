@@ -10,18 +10,19 @@
 #include <gpiod.h>
 #include "Ethernet/socket.h"
 #include "pio_func.h"
+#include "wizchip_conf.h"
 
 // struct pio_struct_Lihan pio_struct ;
 
 // QSPI 모드 정의 (wizchip_qspi_pio.h와 호환) 
-#define QSPI_SINGLE_MODE    1
-#define QSPI_DUAL_MODE      2
-#define QSPI_QUAD_MODE      4
+// #define QSPI_SINGLE_MODE    1
+// #define QSPI_DUAL_MODE      2
+// #define QSPI_QUAD_MODE      4
 
 
-#define _W6300_SPI_OP_          _WIZCHIP_SPI_VDM_OP_
-#define _W6300_SPI_READ_                  (0x00 << 5)  |  0x80     ///< SPI interface Read operation in Control Phase
-#define _W6300_SPI_WRITE_                 (0x01 << 5)  |  0x80     ///< SPI interface Write operation in Control Phase
+// #define _W6300_SPI_OP_          _WIZCHIP_SPI_VDM_OP_
+// #define _W6300_SPI_READ_                  (0x00 << 5)  |  0x80     ///< SPI interface Read operation in Control Phase
+// #define _W6300_SPI_WRITE_                 (0x01 << 5)  |  0x80     ///< SPI interface Write operation in Control Phase
 
 
 
@@ -31,10 +32,19 @@ static volatile int keep_running = 1;
 uint8_t tx_buf[16];
 uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};  ;
 
+struct gpiod_chip *chip;
+struct gpiod_line *cs_line;
 
-int main(int argc, char *argv[]) {
+void SC_Sel(){
+    gpiod_line_set_value(cs_line, 0);
+}
+void SC_DeSel(){
+    gpiod_line_set_value(cs_line, 1);
+}
+
+// int main(int argc, char *argv[]) {
+int main() {
     uint16_t ADDR =  0X4138; //SiPR 
-    uint32_t test_value[16] = {0x12000000,0x48000000,0x12000000,0x48000000,};
 
 
     /* 강제종료를 막고 안전한 자원해제를 위함 */
@@ -42,14 +52,14 @@ int main(int argc, char *argv[]) {
     signal(SIGTERM, signal_handler);// 종료 시그널 처리 
     
     
-    struct gpiod_chip *chip;
+
     chip = gpiod_chip_open_by_number(0);
     if (!chip) {
         fprintf(stderr, "gpiod_chip_open_by_number 실패\n");
         exit(1);
     }
     
-    struct gpiod_line *cs_line = gpiod_chip_get_line(chip, QSPI_CS_PIN);
+    cs_line = gpiod_chip_get_line(chip, QSPI_CS_PIN);
     if (!cs_line || gpiod_line_request_output(cs_line, "qspi_cs", 1) < 0) {
         fprintf(stderr, "CS 핀 초기화 실패\n");
         gpiod_chip_close(chip);
@@ -61,31 +71,43 @@ int main(int argc, char *argv[]) {
 
     printf("CS 핀 , PIO 초기화 완료\n");
 
-    uint32_t cmdBuf[16] = {0,};
     // wiznet_spi_pio_read_byte(0xFF, 0x0000, cmdBuf, 64); // Quad Read 명령어
 
     printf("CS 핀 , PIO 초기화 완료\n");
-
+    
+    reg_wizchip_qspi_cbfunc(wiznet_spi_pio_read_byte, wiznet_spi_pio_write_byte);
+    reg_wizchip_cs_cbfunc(SC_Sel, SC_DeSel);
     while (keep_running) {
 
         /*write SIPR[0:4] */
-        gpiod_line_set_value(cs_line, 0);
+        // gpiod_line_set_value(cs_line, 0);
+        printf( " id = %08x\n", getCIDR());
+        printf( " id = %08x\n", WIZCHIP_READ(0x00<< 8));
+        printf( " id = %08x\n", WIZCHIP_READ(0x01<< 8 ));
+        printf( " id = %08x\n", WIZCHIP_READ(0x02<< 8 ));
+        printf( " id = %08x\n", WIZCHIP_READ(0x03<< 8 ));
+        printf( " id = %08x\n", WIZCHIP_READ(0x04<< 8 ));
+        printf( " id = %08x\n", WIZCHIP_READ(0x05<< 8 ));
+        printf( " id = %08x\n", WIZCHIP_READ(0x06<< 8 ));
+
+
+        /* write Buffer TEST*/
+        uint8_t test_value[4] = {0x12,0x48,0x12,0x48};
+        setSIPR(test_value);
+        usleep(100);
+
+
+
+        /*READ BUFFER TEST */
+        uint8_t sipr[4] = {0,};
+        getSIPR(sipr);
+        printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
 
         usleep(100);
-        wiznet_spi_pio_write_byte( _W6300_SPI_WRITE_, ADDR, test_value, 4);
-        usleep(100);
-        gpiod_line_set_value(cs_line, 1);
-        usleep(100);
 
-        /*Read SIPR[0:4] */
-        gpiod_line_set_value(cs_line, 0);
-        usleep(100);
-        wiznet_spi_pio_read_byte( _W6300_SPI_READ_, ADDR, rx_buf, 4);
-        usleep(100);
-        gpiod_line_set_value(cs_line, 1);
 
         /*verify result*/
-#if 1
+#if 0
          for(int i=0; i<16; i++) {
              printf("%02X ", rx_buf[i]);
          }
