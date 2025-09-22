@@ -1,0 +1,172 @@
+diff --git a/Application/loopback/loopback.c b/Application/loopback/loopback.c
+index a199755..dc361c0 100644
+--- a/Application/loopback/loopback.c
++++ b/Application/loopback/loopback.c
+@@ -4,6 +4,8 @@
+ #include "wizchip_conf.h"
+ 
+ 
++#define close wiz_close
++
+ #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
+ 
+ 
+diff --git a/Ethernet/socket.c b/Ethernet/socket.c
+index 4f6ee50..40865e3 100644
+--- a/Ethernet/socket.c
++++ b/Ethernet/socket.c
+@@ -54,7 +54,7 @@
+ //
+ //*****************************************************************************
+ #include "socket.h"
+-
++#define close wiz_close
+ //M20150401 : Typing Error
+ //#define SOCK_ANY_PORT_NUM  0xC000;
+ #define SOCK_ANY_PORT_NUM  0xC000
+diff --git a/Ethernet/socket.h b/Ethernet/socket.h
+index 292844c..c7fba6b 100644
+--- a/Ethernet/socket.h
++++ b/Ethernet/socket.h
+@@ -87,8 +87,9 @@
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+-
+ #include "wizchip_conf.h"
++#define close wiz_close
++
+ 
+ #define SOCKET                uint8_t  ///< SOCKET type define for legacy driver
+ 
+diff --git a/Ethernet/wizchip_conf.h b/Ethernet/wizchip_conf.h
+index 1bea81a..c7a0ce1 100644
+--- a/Ethernet/wizchip_conf.h
++++ b/Ethernet/wizchip_conf.h
+@@ -74,10 +74,8 @@ extern "C" {
+ #define W6300                 6300
+ 
+ 
+-#ifndef _WIZCHIP_
+ // NOTE_LIHAN: Some sections of this code are not yet fully defined.
+ #define _WIZCHIP_                      W6300   // W5100, W5100S, W5200, W5300, W5500, 6300
+-#endif
+ 
+ //
+ //#ifndef _WIZCHIP_
+@@ -275,7 +273,7 @@ typedef   int16_t   datasize_t;     ///< sent or received data size
+ #define QSPI_QUAD_MODE              (0x02 << 6) // 0b1000 0000 // 0x80 
+ 
+ #ifndef _WIZCHIP_QSPI_MODE_
+-#define _WIZCHIP_QSPI_MODE_          QSPI_SINGLE_MODE
++#define _WIZCHIP_QSPI_MODE_          QSPI_QUAD_MODE
+ #endif
+ 
+ //#define _WIZCHIP_IO_MODE_         _WIZCHIP_IO_MODE_BUS_INDIR_
+diff --git a/Internet/AAC/AddressAutoConfig.c b/Internet/AAC/AddressAutoConfig.c
+index 1d3b333..0537cb6 100644
+--- a/Internet/AAC/AddressAutoConfig.c
++++ b/Internet/AAC/AddressAutoConfig.c
+@@ -31,6 +31,8 @@
+ //*****************************************************************************
+ 
+ #include "AddressAutoConfig.h"
++#define close wiz_close
++
+ 
+ #if (_WIZCHIP_ == W6100)
+ 
+diff --git a/Internet/DHCP/dhcp.c b/Internet/DHCP/dhcp.c
+index 3925ca8..8d02d18 100644
+--- a/Internet/DHCP/dhcp.c
++++ b/Internet/DHCP/dhcp.c
+@@ -52,6 +52,7 @@
+ 
+ #include "socket.h"
+ #include "dhcp.h"
++#define close wiz_close
+ 
+ /* If you want to display debug & processing message, Define _DHCP_DEBUG_ in dhcp.h */
+ 
+diff --git a/Internet/DHCP6/dhcpv6.c b/Internet/DHCP6/dhcpv6.c
+index a894cc8..5e086f4 100644
+--- a/Internet/DHCP6/dhcpv6.c
++++ b/Internet/DHCP6/dhcpv6.c
+@@ -52,7 +52,7 @@
+ #ifdef _DHCP6_DEBUG_
+ #include <stdio.h>
+ #endif
+-
++#define close wiz_close
+ /* DHCP6 state machine. */
+ #define STATE_DHCP6_INIT 0      ///< Initialize
+ #define STATE_DHCP6_SOLICIT 1   ///< send DISCOVER and wait OFFER
+diff --git a/Internet/DNS/dns.c b/Internet/DNS/dns.c
+index e4e1969..d38f05c 100644
+--- a/Internet/DNS/dns.c
++++ b/Internet/DNS/dns.c
+@@ -54,6 +54,7 @@
+ 
+ #include "socket.h"
+ #include "dns.h"
++#define close wiz_close
+ 
+ #ifdef _DNS_DEBUG_
+ #include <stdio.h>
+diff --git a/Internet/SNMP/snmp.c b/Internet/SNMP/snmp.c
+index 2ba75e5..3bed6bb 100644
+--- a/Internet/SNMP/snmp.c
++++ b/Internet/SNMP/snmp.c
+@@ -7,6 +7,7 @@
+ #include "socket.h"
+ #include "snmp.h"
+ #include "snmp_custom.h"
++#define close wiz_close
+ 
+ /********************************************************************************************/
+ /* SNMP : Functions declaration                                                             */
+diff --git a/Internet/SNTP/sntp.c b/Internet/SNTP/sntp.c
+index 0a0424d..8186865 100644
+--- a/Internet/SNTP/sntp.c
++++ b/Internet/SNTP/sntp.c
+@@ -10,6 +10,7 @@
+ 
+ #include "sntp.h"
+ #include "socket.h"
++#define close wiz_close
+ 
+ ntpformat NTPformat;
+ datetime Nowdatetime;
+diff --git a/Internet/TFTP/tftp.c b/Internet/TFTP/tftp.c
+index 176c971..caccbb9 100644
+--- a/Internet/TFTP/tftp.c
++++ b/Internet/TFTP/tftp.c
+@@ -10,6 +10,7 @@
+ #include "tftp.h"
+ #include "socket.h"
+ #include "netutil.h"
++#define close wiz_close
+ 
+ /* define -------------------------------------------------------*/
+ 
+@@ -97,7 +98,7 @@ static inline uint32_t get_tftp_state() {
+ static inline void set_tftp_timeout(uint32_t timeout) {
+     g_timeout = timeout;
+ }
+-
++csc
+ static inline uint32_t get_tftp_timeout() {
+     return g_timeout;
+ }
+diff --git a/Internet/httpServer/httpServer.c b/Internet/httpServer/httpServer.c
+index 1663561..487fa5f 100644
+--- a/Internet/httpServer/httpServer.c
++++ b/Internet/httpServer/httpServer.c
+@@ -16,6 +16,7 @@
+ #ifndef DATA_BUF_SIZE
+ #define DATA_BUF_SIZE		2048
+ #endif
++#define close wiz_close
+ 
+ /*****************************************************************************
+     Private types/enumerations/variables
