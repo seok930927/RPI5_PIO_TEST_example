@@ -1,16 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <string.h>
-#include "../utils/piolib/include/piolib.h"
-#include "../include/wizchip_qspi_pio.pio.h"
-#include <gpiod.h>
-#include "Ethernet/socket.h"
-
 #include "pio_func.h"
+
 struct pio_struct_Lihan pio_struct; // <-- 이 줄 추가
 
 
@@ -186,20 +175,20 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
 
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length) {
-
+    uint32_t rx_buf32[2048] = {0,};
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
-    pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
-    convert32to8(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
+    pio_read_byte(&pio_struct, op_code, AddrSel, rx_buf32, rx_length);
+    convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
 
 
 }
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
 
-    uint32_t tx_convert32[128] = {0,};
+    uint32_t tx_convert32[2048] = {0,};
     convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
-    for(int i=0; i< tx_length; i++){
-        printf("tx_length : %08x \r\n", tx_convert32[i]);
-    }
+    // for(int i=0; i< tx_length; i++){
+    //     printf("tx_length : %08x \r\n", tx_convert32[i]);
+    // }
     pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
@@ -209,7 +198,7 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
 
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
-    uint32_t cmd[128] ={0,};
+    uint32_t cmd[2048] ={0,};
     uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
 
     pio_init_lihan(pioStruct, true, cmd_size, rx_length ); // 80바이트 전송 준비
@@ -226,7 +215,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
 
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
-    uint32_t cmd[128] ={0,};
+    uint32_t cmd[2048] ={0,};
     
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
     // for(int i=0; i< 16; i++){

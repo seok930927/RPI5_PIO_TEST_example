@@ -31,6 +31,44 @@ CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: include/wizchip_qspi_
   utils/piolib/include/hardware/gpio.h \
   utils/piolib/include/pio_platform.h
 
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o: lib/ioLibrary_Driver/Application/loopback/loopback.c \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdio.h \
+  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/features.h \
+  /usr/include/features-time64.h \
+  /usr/include/aarch64-linux-gnu/bits/wordsize.h \
+  /usr/include/aarch64-linux-gnu/bits/timesize.h \
+  /usr/include/aarch64-linux-gnu/sys/cdefs.h \
+  /usr/include/aarch64-linux-gnu/bits/long-double.h \
+  /usr/include/aarch64-linux-gnu/gnu/stubs.h \
+  /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h \
+  /usr/include/aarch64-linux-gnu/bits/types.h \
+  /usr/include/aarch64-linux-gnu/bits/typesizes.h \
+  /usr/include/aarch64-linux-gnu/bits/time64.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/types/FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/aarch64-linux-gnu/bits/floatn.h \
+  /usr/include/aarch64-linux-gnu/bits/floatn-common.h \
+  lib/ioLibrary_Driver/Application/loopback/loopback.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/aarch64-linux-gnu/bits/wchar.h \
+  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
+  lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
+  lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
+  lib/ioLibrary_Driver/Application/Application.h \
+  lib/ioLibrary_Driver/Ethernet/socket.h \
+  lib/ioLibrary_Driver/Ethernet/wizchip_conf.h
+
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c \
   /usr/include/stdc-predef.h \
   lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
@@ -107,6 +145,7 @@ CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o: lib/ioL
 
 CMakeFiles/qspi_test.dir/src/pio_func.c.o: src/pio_func.c \
   /usr/include/stdc-predef.h \
+  src/pio_func.h \
   /usr/include/stdio.h \
   /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
   /usr/include/features.h \
@@ -245,8 +284,7 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.o: src/pio_func.c \
   lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
   lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
   lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
-  lib/ioLibrary_Driver/Application/Application.h \
-  src/pio_func.h
+  lib/ioLibrary_Driver/Application/Application.h
 
 CMakeFiles/qspi_test.dir/src/qspi_test.c.o: src/qspi_test.c \
   /usr/include/stdc-predef.h \
@@ -389,8 +427,161 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: src/qspi_test.c \
   lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
   lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
   lib/ioLibrary_Driver/Application/Application.h \
-  src/pio_func.h
+  src/pio_func.h \
+  src/wizchip_spi.h \
+  include/board_list.h \
+  lib/ioLibrary_Driver/Application/loopback/loopback.h
 
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: src/wizchip_spi.c \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdio.h \
+  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/features.h \
+  /usr/include/features-time64.h \
+  /usr/include/aarch64-linux-gnu/bits/wordsize.h \
+  /usr/include/aarch64-linux-gnu/bits/timesize.h \
+  /usr/include/aarch64-linux-gnu/sys/cdefs.h \
+  /usr/include/aarch64-linux-gnu/bits/long-double.h \
+  /usr/include/aarch64-linux-gnu/gnu/stubs.h \
+  /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h \
+  /usr/include/aarch64-linux-gnu/bits/types.h \
+  /usr/include/aarch64-linux-gnu/bits/typesizes.h \
+  /usr/include/aarch64-linux-gnu/bits/time64.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/types/FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/aarch64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/aarch64-linux-gnu/bits/floatn.h \
+  /usr/include/aarch64-linux-gnu/bits/floatn-common.h \
+  lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/aarch64-linux-gnu/bits/wchar.h \
+  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
+  lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
+  lib/ioLibrary_Driver/Application/Application.h \
+  src/wizchip_spi.h \
+  include/board_list.h \
+  /home/lihan/pio_qspi/wizchip_qspi_pio.h \
+  src/pio_func.h \
+  /usr/include/stdlib.h \
+  /usr/include/aarch64-linux-gnu/bits/waitflags.h \
+  /usr/include/aarch64-linux-gnu/bits/waitstatus.h \
+  /usr/include/aarch64-linux-gnu/sys/types.h \
+  /usr/include/aarch64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/time_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/endian.h \
+  /usr/include/aarch64-linux-gnu/bits/endian.h \
+  /usr/include/aarch64-linux-gnu/bits/endianness.h \
+  /usr/include/aarch64-linux-gnu/bits/byteswap.h \
+  /usr/include/aarch64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/aarch64-linux-gnu/sys/select.h \
+  /usr/include/aarch64-linux-gnu/bits/select.h \
+  /usr/include/aarch64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/aarch64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/aarch64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/aarch64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/aarch64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/aarch64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/aarch64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/alloca.h \
+  /usr/include/aarch64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/unistd.h \
+  /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
+  /usr/include/aarch64-linux-gnu/bits/environments.h \
+  /usr/include/aarch64-linux-gnu/bits/confname.h \
+  /usr/include/aarch64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/aarch64-linux-gnu/bits/getopt_core.h \
+  /usr/include/aarch64-linux-gnu/bits/unistd_ext.h \
+  /usr/include/signal.h \
+  /usr/include/aarch64-linux-gnu/bits/signum-generic.h \
+  /usr/include/aarch64-linux-gnu/bits/signum-arch.h \
+  /usr/include/aarch64-linux-gnu/bits/types/sig_atomic_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/siginfo_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__sigval_t.h \
+  /usr/include/aarch64-linux-gnu/bits/siginfo-arch.h \
+  /usr/include/aarch64-linux-gnu/bits/siginfo-consts.h \
+  /usr/include/aarch64-linux-gnu/bits/types/sigval_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h \
+  /usr/include/aarch64-linux-gnu/bits/sigevent-consts.h \
+  /usr/include/aarch64-linux-gnu/bits/sigaction.h \
+  /usr/include/aarch64-linux-gnu/bits/sigcontext.h \
+  /usr/lib/linux/uapi/arm64/asm/sigcontext.h \
+  /usr/include/linux/types.h \
+  /usr/lib/linux/uapi/arm64/asm/types.h \
+  /usr/include/asm-generic/types.h \
+  /usr/include/asm-generic/int-ll64.h \
+  /usr/lib/linux/uapi/arm64/asm/bitsperlong.h \
+  /usr/include/asm-generic/bitsperlong.h \
+  /usr/include/linux/posix_types.h \
+  /usr/include/linux/stddef.h \
+  /usr/lib/linux/uapi/arm64/asm/posix_types.h \
+  /usr/include/asm-generic/posix_types.h \
+  /usr/lib/linux/uapi/arm64/asm/sve_context.h \
+  /usr/include/aarch64-linux-gnu/bits/types/stack_t.h \
+  /usr/include/aarch64-linux-gnu/sys/ucontext.h \
+  /usr/include/aarch64-linux-gnu/sys/procfs.h \
+  /usr/include/aarch64-linux-gnu/sys/time.h \
+  /usr/include/aarch64-linux-gnu/sys/user.h \
+  /usr/include/aarch64-linux-gnu/bits/procfs.h \
+  /usr/include/aarch64-linux-gnu/bits/procfs-id.h \
+  /usr/include/aarch64-linux-gnu/bits/procfs-prregset.h \
+  /usr/include/aarch64-linux-gnu/bits/procfs-extra.h \
+  /usr/include/aarch64-linux-gnu/bits/sigstack.h \
+  /usr/include/aarch64-linux-gnu/bits/sigstksz.h \
+  /usr/include/aarch64-linux-gnu/bits/ss_flags.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_sigstack.h \
+  /usr/include/aarch64-linux-gnu/bits/sigthread.h \
+  /usr/include/aarch64-linux-gnu/bits/signal_ext.h \
+  /usr/include/aarch64-linux-gnu/sys/mman.h \
+  /usr/include/aarch64-linux-gnu/bits/mman.h \
+  /usr/include/aarch64-linux-gnu/bits/mman-map-flags-generic.h \
+  /usr/include/aarch64-linux-gnu/bits/mman-linux.h \
+  /usr/include/aarch64-linux-gnu/bits/mman-shared.h \
+  /usr/include/aarch64-linux-gnu/bits/mman_ext.h \
+  /usr/include/fcntl.h \
+  /usr/include/aarch64-linux-gnu/bits/fcntl.h \
+  /usr/include/aarch64-linux-gnu/bits/fcntl-linux.h \
+  /usr/include/aarch64-linux-gnu/bits/stat.h \
+  /usr/include/aarch64-linux-gnu/bits/struct_stat.h \
+  /usr/include/string.h \
+  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/strings.h \
+  utils/piolib/include/piolib.h \
+  utils/piolib/include/pio_platform.h \
+  /usr/include/assert.h \
+  /usr/include/inttypes.h \
+  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
+  utils/piolib/include/hardware/clocks.h \
+  utils/piolib/include/hardware/gpio.h \
+  utils/piolib/include/pio_platform.h \
+  include/wizchip_qspi_pio.pio.h \
+  utils/piolib/include/hardware/pio.h \
+  utils/piolib/include/piolib.h \
+  /usr/include/gpiod.h \
+  /usr/include/time.h \
+  /usr/include/aarch64-linux-gnu/bits/time.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h \
+  lib/ioLibrary_Driver/Ethernet/socket.h \
+  lib/ioLibrary_Driver/Ethernet/wizchip_conf.h
+
+
+src/wizchip_spi.h:
+
+include/board_list.h:
 
 src/qspi_test.c:
 
@@ -412,9 +603,11 @@ src/qspi_test.c:
 
 /usr/include/fcntl.h:
 
-/usr/include/aarch64-linux-gnu/bits/endianness.h:
+/usr/include/aarch64-linux-gnu/bits/mman_ext.h:
 
-/usr/include/aarch64-linux-gnu/bits/types/time_t.h:
+/usr/include/aarch64-linux-gnu/bits/mman-linux.h:
+
+/usr/include/aarch64-linux-gnu/bits/mman-map-flags-generic.h:
 
 /usr/include/aarch64-linux-gnu/bits/waitflags.h:
 
@@ -430,29 +623,35 @@ src/qspi_test.c:
 
 /usr/include/aarch64-linux-gnu/bits/floatn-common.h:
 
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/__FILE.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/__locale_t.h:
+
+lib/ioLibrary_Driver/Ethernet/wizchip_conf.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/time_t.h:
+
+lib/ioLibrary_Driver/Application/loopback/loopback.h:
+
+/usr/include/aarch64-linux-gnu/bits/endianness.h:
+
 /usr/include/aarch64-linux-gnu/bits/types/FILE.h:
 
 lib/ioLibrary_Driver/Application/Application.h:
 
 /usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h:
 
-/usr/include/stdio.h:
-
 /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h:
+
+/usr/include/aarch64-linux-gnu/bits/mman-shared.h:
+
+/usr/include/linux/stddef.h:
 
 /usr/include/aarch64-linux-gnu/bits/procfs-id.h:
 
-/usr/include/aarch64-linux-gnu/bits/types/__locale_t.h:
-
-lib/ioLibrary_Driver/Ethernet/wizchip_conf.h:
-
-lib/ioLibrary_Driver/Ethernet/W6300/w6300.h:
-
-/usr/include/aarch64-linux-gnu/bits/types/__FILE.h:
-
-src/pio_func.h:
-
-/usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h:
+/usr/include/stdio.h:
 
 /usr/include/aarch64-linux-gnu/bits/time.h:
 
@@ -486,6 +685,8 @@ lib/ioLibrary_Driver/Ethernet/socket.h:
 
 /usr/include/aarch64-linux-gnu/bits/siginfo-arch.h:
 
+src/wizchip_spi.c:
+
 /usr/include/aarch64-linux-gnu/bits/wordsize.h:
 
 /usr/include/asm-generic/types.h:
@@ -494,9 +695,13 @@ lib/ioLibrary_Driver/Ethernet/socket.h:
 
 /usr/include/aarch64-linux-gnu/bits/long-double.h:
 
+/home/lihan/pio_qspi/wizchip_qspi_pio.h:
+
 /usr/include/stdint.h:
 
 /usr/include/aarch64-linux-gnu/bits/libc-header-start.h:
+
+lib/ioLibrary_Driver/Application/loopback/loopback.c:
 
 /usr/include/aarch64-linux-gnu/bits/signum-generic.h:
 
@@ -504,21 +709,21 @@ utils/piolib/include/hardware/clocks.h:
 
 include/wizchip_qspi_pio.pio.c:
 
-/usr/include/aarch64-linux-gnu/sys/time.h:
+lib/ioLibrary_Driver/Ethernet/W6300/w6300.c:
 
-/usr/include/aarch64-linux-gnu/bits/endian.h:
+/usr/include/aarch64-linux-gnu/bits/pthreadtypes-arch.h:
+
+utils/piolib/include/hardware/gpio.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h:
+
+src/pio_func.h:
 
 /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h:
 
 /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h:
 
 include/wizchip_qspi_pio.pio.h:
-
-/usr/include/gpiod.h:
-
-/usr/include/endian.h:
-
-/usr/include/aarch64-linux-gnu/bits/procfs-extra.h:
 
 utils/piolib/include/hardware/pio.h:
 
@@ -540,8 +745,6 @@ utils/piolib/include/pio_platform.h:
 
 /usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h:
 
-/usr/include/aarch64-linux-gnu/bits/mman-map-flags-generic.h:
-
 /usr/include/aarch64-linux-gnu/bits/typesizes.h:
 
 /usr/include/aarch64-linux-gnu/sys/procfs.h:
@@ -552,11 +755,15 @@ utils/piolib/include/pio_platform.h:
 
 /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h:
 
-utils/piolib/include/hardware/gpio.h:
+/usr/include/gpiod.h:
 
-lib/ioLibrary_Driver/Ethernet/W6300/w6300.c:
+/usr/include/aarch64-linux-gnu/bits/procfs-extra.h:
 
-/usr/include/aarch64-linux-gnu/bits/pthreadtypes-arch.h:
+/usr/include/endian.h:
+
+/usr/include/aarch64-linux-gnu/sys/time.h:
+
+/usr/include/aarch64-linux-gnu/bits/endian.h:
 
 /usr/include/aarch64-linux-gnu/bits/timesize.h:
 
@@ -671,11 +878,3 @@ utils/piolib/include/piolib.h:
 /usr/include/aarch64-linux-gnu/bits/types/clockid_t.h:
 
 /usr/include/aarch64-linux-gnu/bits/mman.h:
-
-/usr/include/aarch64-linux-gnu/bits/mman_ext.h:
-
-/usr/include/aarch64-linux-gnu/bits/mman-linux.h:
-
-/usr/include/linux/stddef.h:
-
-/usr/include/aarch64-linux-gnu/bits/mman-shared.h:

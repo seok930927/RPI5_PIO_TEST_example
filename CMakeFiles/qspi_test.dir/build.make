@@ -97,10 +97,24 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/qspi_test.dir/src/pio_func.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/lihan/pio_qspi/qspi_pio/src/pio_func.c -o CMakeFiles/qspi_test.dir/src/pio_func.c.s
 
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: CMakeFiles/qspi_test.dir/flags.make
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: src/wizchip_spi.c
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o -MF CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o.d -o CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o -c /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.c
+
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/qspi_test.dir/src/wizchip_spi.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.c > CMakeFiles/qspi_test.dir/src/wizchip_spi.c.i
+
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/qspi_test.dir/src/wizchip_spi.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.c -o CMakeFiles/qspi_test.dir/src/wizchip_spi.c.s
+
 CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: CMakeFiles/qspi_test.dir/flags.make
 CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: include/wizchip_qspi_pio.pio.c
 CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o -MF CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o.d -o CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o -c /home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.c
 
 CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.s: cmake_force
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o: CMakeFiles/qspi_test.dir/flags.make
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o: lib/ioLibrary_Driver/Ethernet/socket.c
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o -MF CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o.d -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o -c /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/socket.c
 
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.i: cmake_force
@@ -128,7 +142,7 @@ CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.s: cmake_force
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o: CMakeFiles/qspi_test.dir/flags.make
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o: lib/ioLibrary_Driver/Ethernet/wizchip_conf.c
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o -MF CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o.d -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o -c /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c
 
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.i: cmake_force
@@ -139,10 +153,24 @@ CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s: cmake_f
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.s
 
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o: CMakeFiles/qspi_test.dir/flags.make
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o: lib/ioLibrary_Driver/Application/loopback/loopback.c
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o -MF CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o.d -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o -c /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback/loopback.c
+
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback/loopback.c > CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.i
+
+CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback/loopback.c -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.s
+
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o: CMakeFiles/qspi_test.dir/flags.make
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o: CMakeFiles/qspi_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o -MF CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o.d -o CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o -c /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c
 
 CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.i: cmake_force
@@ -157,9 +185,11 @@ CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.s: cmake_fo
 qspi_test_OBJECTS = \
 "CMakeFiles/qspi_test.dir/src/qspi_test.c.o" \
 "CMakeFiles/qspi_test.dir/src/pio_func.c.o" \
+"CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o" \
 "CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o" \
 "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o" \
 "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o" \
+"CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o" \
 "CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o"
 
 # External object files for target qspi_test
@@ -167,14 +197,16 @@ qspi_test_EXTERNAL_OBJECTS =
 
 qspi_test: CMakeFiles/qspi_test.dir/src/qspi_test.c.o
 qspi_test: CMakeFiles/qspi_test.dir/src/pio_func.c.o
+qspi_test: CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o
 qspi_test: CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.o
 qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/socket.c.o
 qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c.o
+qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o
 qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
 qspi_test: CMakeFiles/qspi_test.dir/build.make
 qspi_test: utils/piolib/build/libpio.a
 qspi_test: CMakeFiles/qspi_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking C executable qspi_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable qspi_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/qspi_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,4 +1,16 @@
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <string.h>
+#include "../utils/piolib/include/piolib.h"
+#include "../include/wizchip_qspi_pio.pio.h"
+#include <gpiod.h>
+#include "Ethernet/socket.h"
+
 
 // 핀 정의 (wizchip_qspi_pio.c와 호환)
 #define QSPI_DATA_IO0_PIN   7
@@ -7,8 +19,9 @@
 #define QSPI_DATA_IO3_PIN   23
 #define QSPI_CLOCK_PIN      12
 #define QSPI_CS_PIN         16
+#define RESET_PIN           24
 
-#define CLKDIV         500
+#define CLKDIV       200
 
 extern struct pio_struct_Lihan pio_struct ;
 

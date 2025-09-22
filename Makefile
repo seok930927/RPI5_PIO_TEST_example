@@ -198,6 +198,30 @@ include/wizchip_qspi_pio.pio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.s
 .PHONY : include/wizchip_qspi_pio.pio.c.s
 
+lib/ioLibrary_Driver/Application/loopback/loopback.o: lib/ioLibrary_Driver/Application/loopback/loopback.c.o
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.o
+
+# target to build an object file
+lib/ioLibrary_Driver/Application/loopback/loopback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.c.o
+
+lib/ioLibrary_Driver/Application/loopback/loopback.i: lib/ioLibrary_Driver/Application/loopback/loopback.c.i
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.i
+
+# target to preprocess a source file
+lib/ioLibrary_Driver/Application/loopback/loopback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.i
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.c.i
+
+lib/ioLibrary_Driver/Application/loopback/loopback.s: lib/ioLibrary_Driver/Application/loopback/loopback.c.s
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.s
+
+# target to generate assembly for a file
+lib/ioLibrary_Driver/Application/loopback/loopback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.s
+.PHONY : lib/ioLibrary_Driver/Application/loopback/loopback.c.s
+
 lib/ioLibrary_Driver/Ethernet/W6300/w6300.o: lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
 .PHONY : lib/ioLibrary_Driver/Ethernet/W6300/w6300.o
 
@@ -318,6 +342,30 @@ src/qspi_test.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/qspi_test.c.s
 .PHONY : src/qspi_test.c.s
 
+src/wizchip_spi.o: src/wizchip_spi.c.o
+.PHONY : src/wizchip_spi.o
+
+# target to build an object file
+src/wizchip_spi.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o
+.PHONY : src/wizchip_spi.c.o
+
+src/wizchip_spi.i: src/wizchip_spi.c.i
+.PHONY : src/wizchip_spi.i
+
+# target to preprocess a source file
+src/wizchip_spi.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/wizchip_spi.c.i
+.PHONY : src/wizchip_spi.c.i
+
+src/wizchip_spi.s: src/wizchip_spi.c.s
+.PHONY : src/wizchip_spi.s
+
+# target to generate assembly for a file
+src/wizchip_spi.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/wizchip_spi.c.s
+.PHONY : src/wizchip_spi.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -334,6 +382,9 @@ help:
 	@echo "... include/wizchip_qspi_pio.pio.o"
 	@echo "... include/wizchip_qspi_pio.pio.i"
 	@echo "... include/wizchip_qspi_pio.pio.s"
+	@echo "... lib/ioLibrary_Driver/Application/loopback/loopback.o"
+	@echo "... lib/ioLibrary_Driver/Application/loopback/loopback.i"
+	@echo "... lib/ioLibrary_Driver/Application/loopback/loopback.s"
 	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.o"
 	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.i"
 	@echo "... lib/ioLibrary_Driver/Ethernet/W6300/w6300.s"
@@ -349,6 +400,9 @@ help:
 	@echo "... src/qspi_test.o"
 	@echo "... src/qspi_test.i"
 	@echo "... src/qspi_test.s"
+	@echo "... src/wizchip_spi.o"
+	@echo "... src/wizchip_spi.i"
+	@echo "... src/wizchip_spi.s"
 .PHONY : help
 
 

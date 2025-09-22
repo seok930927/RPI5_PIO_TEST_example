@@ -11,6 +11,9 @@
 #include "Ethernet/socket.h"
 #include "pio_func.h"
 #include "wizchip_conf.h"
+#include "wizchip_spi.h"
+#include "loopback.h"
+
 
 // struct pio_struct_Lihan pio_struct ;
 
@@ -25,27 +28,67 @@
 // #define _W6300_SPI_WRITE_                 (0x01 << 5)  |  0x80     ///< SPI interface Write operation in Control Phase
 
 
+static wiz_NetInfo g_net_info = {
+    .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
+    .ip = {192, 168, 11, 2},                     // IP address
+    .sn = {255, 255, 255, 0},                    // Subnet Mask
+    .gw = {192, 168, 11, 1},                     // Gateway
+    .dns = {8, 8, 8, 8},                         // DNS server
+#if _WIZCHIP_ > W5500
+    .lla = {
+        0xfe, 0x80, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x02, 0x08, 0xdc, 0xff,
+        0xfe, 0x57, 0x57, 0x25
+    },             // Link Local Address
+    .gua = {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // Global Unicast Address
+    .sn6 = {
+        0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // IPv6 Prefix
+    .gw6 = {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // Gateway IPv6 Address
+    .dns6 = {
+        0x20, 0x01, 0x48, 0x60,
+        0x48, 0x60, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x88, 0x88
+    },             // DNS6 server
+    .ipmode = NETINFO_STATIC_ALL
+#else
+    .dhcp = NETINFO_STATIC
+#endif
+};
 
+/* Loopback */
+static uint8_t g_tcp_server_buf[1024 *2] = {
+    0,
+};
 
 static volatile int keep_running = 1;
 
 uint8_t tx_buf[16];
 uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};  ;
 
-struct gpiod_chip *chip;
-struct gpiod_line *cs_line;
-
-void SC_Sel(){
-    gpiod_line_set_value(cs_line, 0);
-}
-void SC_DeSel(){
-    gpiod_line_set_value(cs_line, 1);
-}
+// struct gpiod_chip *chip;
+// struct gpiod_line *cs_line;
 
 // int main(int argc, char *argv[]) {
 int main() {
     uint16_t ADDR =  0X4138; //SiPR 
 
+    int retval = 0;
 
     /* 강제종료를 막고 안전한 자원해제를 위함 */
     signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
@@ -53,57 +96,66 @@ int main() {
     
     
 
-    chip = gpiod_chip_open_by_number(0);
-    if (!chip) {
-        fprintf(stderr, "gpiod_chip_open_by_number 실패\n");
-        exit(1);
-    }
+    // chip = gpiod_chip_open_by_number(0);
+    // if (!chip) {
+    //     fprintf(stderr, "gpiod_chip_open_by_number 실패\n");
+    //     exit(1);
+    // }
     
-    cs_line = gpiod_chip_get_line(chip, QSPI_CS_PIN);
-    if (!cs_line || gpiod_line_request_output(cs_line, "qspi_cs", 1) < 0) {
-        fprintf(stderr, "CS 핀 초기화 실패\n");
-        gpiod_chip_close(chip);
-        exit(1);
-    }
+    // cs_line = gpiod_chip_get_line(chip, QSPI_CS_PIN);
+    // if (!cs_line || gpiod_line_request_output(cs_line, "qspi_cs", 1) < 0) {
+    //     fprintf(stderr, "CS 핀 초기화 실패\n");
+    //     gpiod_chip_close(chip);
+    //     exit(1);
+    // }
     // return cs_line;
-   
+//    wizchip_reset() ;
     pio_open_lihan(&pio_struct);
+    printf("PIO 및 SM 초기화 완료\n");
+    // reg_wizchip_qspi_cbfunc(wiznet_spi_pio_read_byte, wiznet_spi_pio_write_byte);
+    printf("QSPI 콜백 함수 등록 완료\n");
+    wizchip_initialize();
+    printf("QSPI 콜백 함수 등록 완료\n");
 
-    printf("CS 핀 , PIO 초기화 완료\n");
+    network_initialize(g_net_info);
 
-    // wiznet_spi_pio_read_byte(0xFF, 0x0000, cmdBuf, 64); // Quad Read 명령어
+    print_network_information(g_net_info);
 
-    printf("CS 핀 , PIO 초기화 완료\n");
-    
-    reg_wizchip_qspi_cbfunc(wiznet_spi_pio_read_byte, wiznet_spi_pio_write_byte);
-    reg_wizchip_cs_cbfunc(SC_Sel, SC_DeSel);
     while (keep_running) {
 
+
+                /* TCP server loopback test */
+        if ((retval = loopback_tcps(0, g_tcp_server_buf, 5000)) < 0) {
+            printf(" loopback_tcps error : %d\n", retval);
+
+            while (1)
+                ;
+        }
         /*write SIPR[0:4] */
         // gpiod_line_set_value(cs_line, 0);
-        printf( " id = %08x\n", getCIDR());
-        printf( " id = %08x\n", WIZCHIP_READ(0x00<< 8));
-        printf( " id = %08x\n", WIZCHIP_READ(0x01<< 8 ));
-        printf( " id = %08x\n", WIZCHIP_READ(0x02<< 8 ));
-        printf( " id = %08x\n", WIZCHIP_READ(0x03<< 8 ));
-        printf( " id = %08x\n", WIZCHIP_READ(0x04<< 8 ));
-        printf( " id = %08x\n", WIZCHIP_READ(0x05<< 8 ));
-        printf( " id = %08x\n", WIZCHIP_READ(0x06<< 8 ));
+        // printf( " id = %08x\n", getCIDR());
+        // printf( " id = %08x\n", WIZCHIP_READ(0x00<< 8));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x01<< 8 ));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x02<< 8 ));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x03<< 8 ));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x04<< 8 ));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x05<< 8 ));
+        // printf( " id = %08x\n", WIZCHIP_READ(0x06<< 8 ));
 
 
-        /* write Buffer TEST*/
-        uint8_t test_value[4] = {0x12,0x48,0x12,0x48};
-        setSIPR(test_value);
-        usleep(100);
+        // /* write Buffer TEST*/
+    //     uint8_t test_value[4] = {0x12,0x48,0x12,0x48};
+    //     setSIPR(test_value);
+    //     usleep(100);
+    //     // /*READ BUFFER TEST */
+    //     uint8_t sipr[4] = {0,};
+    //     getSIPR(sipr);
+    //     printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
+    // //    wizchip_reset() ;
 
-
-
-        /*READ BUFFER TEST */
-        uint8_t sipr[4] = {0,};
-        getSIPR(sipr);
-        printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
-
-        usleep(100);
+    //     getSIPR(sipr);
+    //     printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
+    //     usleep(1000000);
 
 
         /*verify result*/
@@ -124,8 +176,8 @@ int main() {
     pio_sm_unclaim(pio_struct.pio, pio_struct.sm);
     pio_close(pio_struct.pio);
     // gpiod 해제
-    gpiod_line_release(cs_line);
-    gpiod_chip_close(chip);
+    // gpiod_line_release(cs_line);
+    // gpiod_chip_close(chip);
     printf("완료\n");
     return 0;
 

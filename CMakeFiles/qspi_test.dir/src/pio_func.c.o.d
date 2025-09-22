@@ -1,6 +1,6 @@
-CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
- /home/lihan/pio_qspi/qspi_pio/src/qspi_test.c /usr/include/stdc-predef.h \
- /usr/include/stdio.h \
+CMakeFiles/qspi_test.dir/src/pio_func.c.o: \
+ /home/lihan/pio_qspi/qspi_pio/src/pio_func.c /usr/include/stdc-predef.h \
+ /home/lihan/pio_qspi/qspi_pio/src/pio_func.h /usr/include/stdio.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/aarch64-linux-gnu/bits/wordsize.h \
@@ -123,8 +123,4 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/./W6300/w6300.h \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
- /home/lihan/pio_qspi/qspi_pio/src/pio_func.h \
- /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.h \
- /home/lihan/pio_qspi/qspi_pio/include/board_list.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback/loopback.h
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h

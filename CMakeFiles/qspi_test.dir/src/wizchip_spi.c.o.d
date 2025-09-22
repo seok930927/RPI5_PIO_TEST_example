@@ -1,6 +1,6 @@
-CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
- /home/lihan/pio_qspi/qspi_pio/src/qspi_test.c /usr/include/stdc-predef.h \
- /usr/include/stdio.h \
+CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: \
+ /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.c \
+ /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/aarch64-linux-gnu/bits/wordsize.h \
@@ -23,15 +23,25 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /usr/include/aarch64-linux-gnu/bits/stdio_lim.h \
  /usr/include/aarch64-linux-gnu/bits/floatn.h \
  /usr/include/aarch64-linux-gnu/bits/floatn-common.h \
- /usr/include/stdlib.h /usr/include/aarch64-linux-gnu/bits/waitflags.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
+ /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
+ /usr/include/aarch64-linux-gnu/bits/wchar.h \
+ /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
+ /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/./W6300/w6300.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
+ /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.h \
+ /home/lihan/pio_qspi/qspi_pio/include/board_list.h \
+ /home/lihan/pio_qspi/qspi_pio/../wizchip_qspi_pio.h \
+ /home/lihan/pio_qspi/qspi_pio/src/pio_func.h /usr/include/stdlib.h \
+ /usr/include/aarch64-linux-gnu/bits/waitflags.h \
  /usr/include/aarch64-linux-gnu/bits/waitstatus.h \
  /usr/include/aarch64-linux-gnu/sys/types.h \
  /usr/include/aarch64-linux-gnu/bits/types/clock_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/clockid_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/time_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/timer_t.h \
- /usr/include/aarch64-linux-gnu/bits/stdint-intn.h /usr/include/endian.h \
- /usr/include/aarch64-linux-gnu/bits/endian.h \
+ /usr/include/endian.h /usr/include/aarch64-linux-gnu/bits/endian.h \
  /usr/include/aarch64-linux-gnu/bits/endianness.h \
  /usr/include/aarch64-linux-gnu/bits/byteswap.h \
  /usr/include/aarch64-linux-gnu/bits/uintn-identity.h \
@@ -105,9 +115,6 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/piolib.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/pio_platform.h \
  /usr/include/assert.h /usr/include/inttypes.h \
- /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
- /usr/include/aarch64-linux-gnu/bits/wchar.h \
- /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/hardware/clocks.h \
  /home/lihan/pio_qspi/qspi_pio/src/../utils/piolib/include/hardware/gpio.h \
@@ -120,11 +127,4 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/struct_tm.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/socket.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/./W6300/w6300.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
- /home/lihan/pio_qspi/qspi_pio/src/pio_func.h \
- /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.h \
- /home/lihan/pio_qspi/qspi_pio/include/board_list.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback/loopback.h
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h

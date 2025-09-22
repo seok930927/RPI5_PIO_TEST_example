@@ -10,8 +10,16 @@ set(PIOLIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/piolib")
 
 file(GLOB IO_LIB_SRC lib/ioLibrary_Driver/Ethernet/*.c)
 file(GLOB W6300_SRC lib/ioLibrary_Driver/Ethernet/W6300/*.c)
+file(GLOB LIB_loopback lib/ioLibrary_Driver/Application/loopback/*.c)
 # 실행 파일 생성
-add_executable(qspi_test src/qspi_test.c src/pio_func.c include/wizchip_qspi_pio.pio.c ${IO_LIB_SRC} ${W6300_SRC})
+add_executable(qspi_test 
+            src/qspi_test.c 
+            src/pio_func.c 
+            src/wizchip_spi.c
+            include/wizchip_qspi_pio.pio.c 
+            ${IO_LIB_SRC} 
+            ${LIB_loopback} 
+            ${W6300_SRC})
 
 # PIOLib 헤더 포함
 target_include_directories(qspi_test PRIVATE 
@@ -20,6 +28,7 @@ target_include_directories(qspi_test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     lib/ioLibrary_Driver/
     lib/ioLibrary_Driver/Ethernet
+    lib/ioLibrary_Driver/Application/loopback
     
 )
 
