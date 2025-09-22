@@ -118,4 +118,10 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: \
  /usr/include/gpiod.h /usr/include/time.h \
  /usr/include/aarch64-linux-gnu/bits/time.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h
+ /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/socket.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/./W6300/w6300.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
+ /home/lihan/pio_qspi/qspi_pio/src/pio_func.h

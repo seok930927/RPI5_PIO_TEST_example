@@ -198,6 +198,30 @@ include/wizchip_qspi_pio.pio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/include/wizchip_qspi_pio.pio.c.s
 .PHONY : include/wizchip_qspi_pio.pio.c.s
 
+src/pio_func.o: src/pio_func.c.o
+.PHONY : src/pio_func.o
+
+# target to build an object file
+src/pio_func.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/pio_func.c.o
+.PHONY : src/pio_func.c.o
+
+src/pio_func.i: src/pio_func.c.i
+.PHONY : src/pio_func.i
+
+# target to preprocess a source file
+src/pio_func.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/pio_func.c.i
+.PHONY : src/pio_func.c.i
+
+src/pio_func.s: src/pio_func.c.s
+.PHONY : src/pio_func.s
+
+# target to generate assembly for a file
+src/pio_func.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/src/pio_func.c.s
+.PHONY : src/pio_func.c.s
+
 src/qspi_test.o: src/qspi_test.c.o
 .PHONY : src/qspi_test.o
 
@@ -238,6 +262,9 @@ help:
 	@echo "... include/wizchip_qspi_pio.pio.o"
 	@echo "... include/wizchip_qspi_pio.pio.i"
 	@echo "... include/wizchip_qspi_pio.pio.s"
+	@echo "... src/pio_func.o"
+	@echo "... src/pio_func.i"
+	@echo "... src/pio_func.s"
 	@echo "... src/qspi_test.o"
 	@echo "... src/qspi_test.i"
 	@echo "... src/qspi_test.s"
