@@ -55,10 +55,12 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
     // 기본 설정 가져오기
     pioStruct->c = pio_get_default_sm_config();
-    sm_config_set_wrap(&pioStruct->c, pioStruct->offset, pioStruct->offset + wizchip_pio_spi_quad_write_read_program.length - 1);  // wrap 설정 (상수로 고정)
+    sm_config_set_wrap(&pioStruct->c, pioStruct->offset, pioStruct->offset + wizchip_pio_spi_quad_write_read_wrap);  // wrap 설정 (상수로 고정)
 
 
-
+    // #include "hardware/clocks.h"
+    uint32_t sys_hz = clock_get_hz(clk_sys);
+    printf("System Clock: %d Hz\n", sys_hz);
     // Quad SPI를 위한 추가 설정
     sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
     sm_config_set_in_pins(&pioStruct->c, QSPI_DATA_IO0_PIN);        // 입력 핀

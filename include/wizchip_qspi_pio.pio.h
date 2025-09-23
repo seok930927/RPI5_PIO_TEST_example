@@ -19,7 +19,7 @@
 // ------------------------------- //
 
 #define wizchip_pio_spi_quad_write_read_wrap_target 0
-#define wizchip_pio_spi_quad_write_read_wrap 9
+#define wizchip_pio_spi_quad_write_read_wrap  7
 #define wizchip_pio_spi_quad_write_read_pio_version 0
 
 #define wizchip_pio_spi_quad_write_read_offset_write_bits_end 3u
