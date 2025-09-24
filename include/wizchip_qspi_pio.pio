@@ -94,4 +94,19 @@ read_bits:
     set pins 0              side 0
 read_bits_fin:    
      set pins 0       side 0
+     set pins 0       side 1
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 1
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 1
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 0
+     set pins 0       side 1
+     
+
 public read_bits_end:
