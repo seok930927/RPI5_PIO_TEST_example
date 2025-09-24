@@ -182,7 +182,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
 
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length) {
-    uint32_t rx_buf32[2048] = {0,};
+
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
@@ -191,12 +191,8 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
 }
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
 
-    uint32_t tx_convert32[2048] = {0,};
-    convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
-    // for(int i=0; i< tx_length; i++){
-    //     printf("tx_length : %08x \r\n", tx[i]);
-    // }
-    pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
+
+    pio_write_byte(&pio_struct, op_code, AddrSel, tx, tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
 
@@ -205,13 +201,13 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
 
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
-    uint32_t cmd[2048] ={0,};
+    uint8_t cmd[2048] ={0,};
     uint8_t cmd2[2048] ={0,};
     uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
 
     for(int i=0; i< 11; i++){
         // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-        cmd2[i] = ((uint8_t)(cmd[i] >>24) & 0x0f) <<4  |((uint8_t)(cmd[i] >>24) &0xf0) >>4;
+        cmd2[i] = ((uint8_t)(cmd[i] ) & 0x0f) <<4  |((uint8_t)(cmd[i] ) &0xf0) >>4;
         // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
 
@@ -230,21 +226,19 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 }
 
 
-void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
-    uint32_t cmd[2048] ={0,};
-    
-    uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
+void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length){
+    uint8_t cmd[2048] ={0,};
+
+    uint8_t cmd_size = mk_cmd_buf_include_data(cmd, (uint8_t *)tx, op_code, AddrSel, tx_length);
     // printf("addsel = : %04x cmd_size =  : %d \r\n", AddrSel, cmd_size);
 
     uint8_t cmd2[25]= {0,};
-    for(int i=0; i< 11; i++){
+    for(int i=0; i< 22; i++){
         // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-        cmd2[i] = ((uint8_t)(cmd[i] >>24) & 0x0f) <<4  |((uint8_t)(cmd[i] >>24) &0xf0) >>4;
+        cmd2[i] = ((uint8_t)(cmd[i] ) & 0x0f) <<4  |((uint8_t)(cmd[i]) &0xf0) >>4;
         // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
-    for(int i=0; i< 4; i++){
-        // printf("cmd2[%d] : %08X \r\n", i, tx[i]);
-    }
+
     pio_init_lihan(pioStruct, true,  cmd_size , 0 );
     usleep(1); // 데이터 전송 대기
     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
@@ -266,7 +260,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }
 
-static uint16_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) {
+static uint16_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
 #if (_WIZCHIP_QSPI_MODE_ == QSPI_SINGLE_MODE)
 
     pdst[0] = opcode;
@@ -283,15 +277,15 @@ static uint16_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) 
 
     return 4 + 1;
 #elif (_WIZCHIP_QSPI_MODE_ == QSPI_QUAD_MODE)
-    pdst[0] = ((opcode >> 7 & 0x01) << (4 +24)) | ((opcode >> 6 & 0x01) << (0+24));
-    pdst[1] = ((opcode >> 5 & 0x01) << (4 +24)) | ((opcode >> 4 & 0x01) << (0+24));
-    pdst[2] = ((opcode >> 3 & 0x01) << (4 +24)) | ((opcode >> 2 & 0x01) << (0+24));
-    pdst[3] = ((opcode >> 1 & 0x01) << (4 +24)) | ((opcode >> 0 & 0x01) << (0+24));
+    pdst[0] = ((opcode >> 7 & 0x01) << (4)) | ((opcode >> 6 & 0x01) << (0));
+    pdst[1] = ((opcode >> 5 & 0x01) << (4)) | ((opcode >> 4 & 0x01) << (0));
+    pdst[2] = ((opcode >> 3 & 0x01) << (4)) | ((opcode >> 2 & 0x01) << (0));
+    pdst[3] = ((opcode >> 1 & 0x01) << (4)) | ((opcode >> 0 & 0x01) << (0));
 
-    pdst[4] = ((uint8_t)(addr >> 8) & 0xFF)<< (0+24) ;
-    pdst[5] = ((uint8_t)(addr >> 0) & 0xFF)<< (0+24);
+    pdst[4] = ((uint8_t)(addr >> 8) & 0xFF)<< (0) ;
+    pdst[5] = ((uint8_t)(addr >> 0) & 0xFF)<< (0);
 
-    pdst[6] = 0 << (0+24);
+    pdst[6] = 0 << (0);
 
 
 #if false
@@ -306,8 +300,8 @@ static uint16_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) 
 
 
 
-static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf, 
-                                        uint32_t *databuf, 
+static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf, 
+                                        uint8_t *databuf, 
                                         uint8_t opcode, 
                                         uint16_t rag_addr,  
                                         uint16_t len_byte) 
@@ -316,7 +310,7 @@ static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf,
 
     uint16_t cmd_len =   mk_cmd_buf_lihan(outbuf, opcode, rag_addr);
 
-    memcpy(outbuf + cmd_len, databuf,len_byte*4 );
+    memcpy(outbuf + cmd_len, databuf,len_byte );
                     // printf("cmd_len %d, len_byte %d \r\n", cmd_len, len_byte);
     return cmd_len + len_byte;
 }
