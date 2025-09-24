@@ -86,6 +86,7 @@ uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0
 
 // int main(int argc, char *argv[]) {
 int main() {
+    // printf("test start  \r\n");
     uint16_t ADDR =  0X4138; //SiPR 
 
     int retval = 0;
@@ -111,10 +112,25 @@ int main() {
     // return cs_line;
 //    wizchip_reset() ;
     pio_open_lihan(&pio_struct);
+    wizchip_initialize();
+
+    while(1){
+        // printf("cid = %02X \r\n", getCIDR());
+        uint8_t ip[4] = {0x1, 0x2, 0x4, 0x8};
+        setSIPR(ip);
+        usleep(100);
+        uint32_t getip[4]= {0xffffffff,}; 
+        getSIPR(getip);
+        printf("SIPR: %04X %04X %04X %04X\n", getip[0], getip[1], getip[2], getip[3]);
+        // sleep(1);
+        if(keep_running == 0) return 0  ; 
+
+    }
+
+
     printf("PIO 및 SM 초기화 완료\n");
     // reg_wizchip_qspi_cbfunc(wiznet_spi_pio_read_byte, wiznet_spi_pio_write_byte);
     printf("QSPI 콜백 함수 등록 완료\n");
-    wizchip_initialize();
     printf("QSPI 콜백 함수 등록 완료\n");
 
     network_initialize(g_net_info);

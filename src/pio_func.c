@@ -71,7 +71,7 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
 
     sm_config_set_in_shift(&pioStruct->c, false, true, 8);
-    sm_config_set_out_shift(&pioStruct->c, false, true, 8);// 4바이트씩 shift
+    sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -112,10 +112,10 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         pio_sm_clkdiv_restart(pioStruct->pio, pioStruct->sm);
                 // X레지스터 길이 지정 - X는  Max loop count        
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 512,2);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 512,1);  // 9개, 4바이트 단위
         if (rx_size > 0) {
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 512, 4);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 512, 1);  // 9개, 4바이트 단위
         }
 
         sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
@@ -137,30 +137,35 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
             gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
         }
         
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size*2) -1  );               // TX FIFO <= 값
+        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
 
         if (rx_size > 0) {
 
-        // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 );               // TX FIFO <= 값
-    }else{
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
+            // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
+            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 );               // TX FIFO <= 값
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
-    }
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+        }else{
+            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+
+        }
+
 
 
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
         //SM 활성화
         pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
 
-        pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
+        // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
         /*S
         이때부터 클럭 생성시작.....
         */
@@ -179,8 +184,8 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length) {
     uint32_t rx_buf32[2048] = {0,};
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
-    pio_read_byte(&pio_struct, op_code, AddrSel, rx_buf32, rx_length);
-    convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
+    pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
+    // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
 
 
 }
@@ -189,7 +194,7 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
     uint32_t tx_convert32[2048] = {0,};
     convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
     // for(int i=0; i< tx_length; i++){
-    //     printf("tx_length : %08x \r\n", tx_convert32[i]);
+    //     printf("tx_length : %08x \r\n", tx[i]);
     // }
     pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
@@ -201,16 +206,25 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
 
     uint32_t cmd[2048] ={0,};
+    uint8_t cmd2[2048] ={0,};
     uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
 
-    pio_init_lihan(pioStruct, true, cmd_size, rx_length ); // 80바이트 전송 준비
-
-    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd); // len은 4의배수만되네..
-    if (sent < 0) {
-        printf("SM XFER DATA ERROR\n");
+    for(int i=0; i< 11; i++){
+        // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
+        cmd2[i] = ((uint8_t)(cmd[i] >>24) & 0x0f) <<4  |((uint8_t)(cmd[i] >>24) &0xf0) >>4;
+        // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
-    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length*4 ,rx);
 
+    pio_init_lihan(pioStruct, true, cmd_size, rx_length ); // 80바이트 전송 준비
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+    
+    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2); // len은 4의배수만되네..
+    if (sent < 0) {
+        printf("READ_SM XFER DATA ERROR\n");
+    }
+
+    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length*4 ,rx);
+    
     // SM 비활성화
     pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }
@@ -220,16 +234,34 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     uint32_t cmd[2048] ={0,};
     
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
-    // for(int i=0; i< 16; i++){
-    //     printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-    // }
+    // printf("addsel = : %04x cmd_size =  : %d \r\n", AddrSel, cmd_size);
 
-    pio_init_lihan(pioStruct, true,  cmd_size , 0 );
-
-    uint16_t sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, ( cmd_size  )*4, cmd );
-    if (sent < 0) {
-        printf("SM XFER DATA ERROR\n");
+    uint8_t cmd2[25]= {0,};
+    for(int i=0; i< 11; i++){
+        // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
+        cmd2[i] = ((uint8_t)(cmd[i] >>24) & 0x0f) <<4  |((uint8_t)(cmd[i] >>24) &0xf0) >>4;
+        // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
+    for(int i=0; i< 4; i++){
+        // printf("cmd2[%d] : %08X \r\n", i, tx[i]);
+    }
+    pio_init_lihan(pioStruct, true,  cmd_size , 0 );
+    usleep(1); // 데이터 전송 대기
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
+
+    uint16_t sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, ( cmd_size *4  ), cmd2 );
+    if (sent < 0) {
+        printf("Write-SM XFER DATA ERROR\n");
+    }
+
+    usleep(1000); // 데이터 전송 대기
+    // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
+
+    usleep(370); // 데이터 전송 대기
+
+
+
     // SM 비활성화
     pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }

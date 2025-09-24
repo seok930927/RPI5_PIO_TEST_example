@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/lihan/pio_qspi/qspi_pio/utils/piolib/include -I/home/lihan/pio_qspi/qspi_pio/include -I/home/lihan/pio_qspi/qspi_pio/.. -I/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver -I/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet -I/home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Application/loopback
 
-C_FLAGS = -Wall -Wextra -std=gnu11
+C_FLAGS = -Wall -Wextra -O0 -std=gnu11
 

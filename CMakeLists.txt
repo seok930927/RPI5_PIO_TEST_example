@@ -39,7 +39,7 @@ target_link_libraries(qspi_test
 )
 
 # 컴파일 옵션
-target_compile_options(qspi_test PRIVATE -Wall -Wextra)
+target_compile_options(qspi_test PRIVATE -Wall -Wextra -O0)
 
 # 설치 설정
 install(TARGETS qspi_test DESTINATION bin)
