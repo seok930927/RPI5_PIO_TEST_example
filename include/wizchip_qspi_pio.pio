@@ -77,13 +77,14 @@ public read_bits_end:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .program wizchip_pio_spi_quad_write_read
 .side_set 1
-
+wiznet_ready: 
+    jmp !x read_bits_fin    side 0
 write_bits: 
     out pins, 4             side 0
     jmp x-- write_bits      side 1
     set pins 0              side 0
-public write_bits_end:
-    jmp !y read_bits_fin    side 1 
+write_bits_end:
+    jmp !y read_bits_fin    side 0 
 read_byte_delay:
     set pindirs 0           side 0
 read_byte:
@@ -94,19 +95,8 @@ read_bits:
     set pins 0              side 0
 read_bits_fin:    
      set pins 0       side 0
-     set pins 0       side 1
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 1
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 1
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 0
-     set pins 0       side 1
+     
+ 
      
 
 public read_bits_end:
