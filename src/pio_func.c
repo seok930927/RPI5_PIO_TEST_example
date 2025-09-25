@@ -69,8 +69,8 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
     sm_config_set_sideset(&pioStruct->c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
-
-    sm_config_set_in_shift(&pioStruct->c, false, true, 8);
+    
+    sm_config_set_in_shift(&pioStruct->c, true, true, 32);
     sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
@@ -145,7 +145,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         if (rx_size > 0) {
 
             // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*4) -1 );               // TX FIFO <= 값
+            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 );               // TX FIFO <= 값
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
@@ -185,9 +185,15 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
 
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     uint32_t rx_buf32[2048] = {0,};
-    pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
+    uint8_t cmd2[2048] ={0,};
+    pio_read_byte(&pio_struct, op_code, AddrSel, cmd2, rx_length);
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
-
+    for(int i=0; i< rx_length; i++){
+        // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
+        rx[i] = ((uint8_t)(cmd2[i] ) & 0x0f) <<4  |((uint8_t)(cmd2[i] ) &0xf0) >>4;
+        // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
+    }
+    
 
 }
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
@@ -196,12 +202,12 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
     pio_write_byte(&pio_struct, op_code, AddrSel, tx, tx_length);
     // printf("tx_length = : %d \r\n", tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
-
+    
 
 }
 
 
-void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *rx, uint16_t rx_length){
+void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length){
 
     uint8_t cmd[2048] ={0,};
     uint8_t cmd2[2048] ={0,};
@@ -212,22 +218,26 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
         cmd2[i] = ((uint8_t)(cmd[i] ) & 0x0f) <<4  |((uint8_t)(cmd[i] ) &0xf0) >>4;
         // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
-
+    
     pio_init_lihan(pioStruct, true, cmd_size, rx_length ); // 80바이트 전송 준비
     
+    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2);
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
-    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2); // len은 4의배수만되네..
-    if (sent < 0) {
-        printf("READ_SM XFER DATA ERROR\n");
-    }
-    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length *4 ,rx);
+    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length ,rx);  // len은 4의배수만되네..    if (sent < 0) {
+        
     
-
-
-
-    usleep(1000); // 데이터 전송 대기
+    // if(recv < 0) {
+    //     printf("READ_SM XFER DATA ERROR\n");
+    // }else{
+    //     printf("READ_SM XFER DATA OK %d \n" , recv);
+    // usleep(100000); // 데이터 전송 대기
     
+    // for(int i=0; i< rx_length; i++){
+    //     printf("cmd[%d] : %2X \r\n", i, rx[i]) ;
+    // }
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+
     // SM 비활성화
     pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
     //     for(int i=0; i< rx_length; i++){
@@ -267,7 +277,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     // // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
     // usleep(370); // 데이터 전송 대기
-    usleep(1000); // 데이터 전송 대기
+    // usleep(1000); // 데이터 전송 대기
 
 
 

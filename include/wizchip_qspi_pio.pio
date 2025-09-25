@@ -87,6 +87,8 @@ write_bits_end:
     jmp !y read_bits_fin    side 0 
 read_byte_delay:
     set pindirs 0           side 0
+    set pindirs 0           side 0
+    set pindirs 0           side 0
 read_byte:
     set x 0                 side 1
 read_bits:

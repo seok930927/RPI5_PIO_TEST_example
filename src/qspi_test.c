@@ -120,7 +120,7 @@ int main() {
         uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
         setGUAR(ip);
         usleep(100);
-        uint32_t getip[16]= {0xf00f0fff,}; 
+        uint8_t getip[16]= {0xf00f0fff,}; 
         getGUAR(getip);
         printf("SIPR: %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
         // sleep(1);
