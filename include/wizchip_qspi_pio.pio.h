@@ -148,33 +148,32 @@ static inline pio_sm_config wizchip_pio_spi_dual_write_read_program_get_default_
 // ------------------------------- //
 
 #define wizchip_pio_spi_quad_write_read_wrap_target 0
-#define wizchip_pio_spi_quad_write_read_wrap 12
+#define wizchip_pio_spi_quad_write_read_wrap 11
 #define wizchip_pio_spi_quad_write_read_pio_version 0
 
-#define wizchip_pio_spi_quad_write_read_offset_read_bits_end 13u
+#define wizchip_pio_spi_quad_write_read_offset_read_bits_end 12u
 
 static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
             //     .wrap_target
-    0x002c, //  0: jmp    !x, 12          side 0
+    0x002a, //  0: jmp    !x, 10          side 0
     0x6004, //  1: out    pins, 4         side 0
     0x1041, //  2: jmp    x--, 1          side 1
     0xe000, //  3: set    pins, 0         side 0
-    0x006c, //  4: jmp    !y, 12          side 0
+    0x006a, //  4: jmp    !y, 10          side 0
     0xe080, //  5: set    pindirs, 0      side 0
-    0xe080, //  6: set    pindirs, 0      side 0
-    0xe080, //  7: set    pindirs, 0      side 0
-    0xf020, //  8: set    x, 0            side 1
+    0xf020, //  6: set    x, 0            side 1
+    0x4004, //  7: in     pins, 4         side 0
+    0x1087, //  8: jmp    y--, 7          side 1
     0x4004, //  9: in     pins, 4         side 0
-    0x1089, // 10: jmp    y--, 9          side 1
+    0xe020, // 10: set    x, 0            side 0
     0xe000, // 11: set    pins, 0         side 0
-    0xe000, // 12: set    pins, 0         side 0
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program wizchip_pio_spi_quad_write_read_program = {
     .instructions = wizchip_pio_spi_quad_write_read_program_instructions,
-    .length = 13,
+    .length = 12,
     .origin = -1,
     .pio_version = wizchip_pio_spi_quad_write_read_pio_version,
 #if PICO_PIO_VERSION > 0

@@ -21,7 +21,7 @@
 #define QSPI_CS_PIN         16
 #define RESET_PIN           24
 
-#define CLKDIV       40// 더 안전한 클럭 분주비로 증가
+#define CLKDIV       500// 더 안전한 클럭 분주비로 증가
 
 extern struct pio_struct_Lihan pio_struct ;
 
@@ -33,7 +33,7 @@ struct pio_struct_Lihan{
 };
 
 
-static uint16_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) ;
+static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) ;
 void signal_handler(int sig);
 
 

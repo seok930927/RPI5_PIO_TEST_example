@@ -250,7 +250,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length){
     uint8_t cmd[2048] ={0,};
-    uint32_t rx[2048] ={0,};
+    uint8_t rx[16] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     uint8_t cmd_size = mk_cmd_buf_include_data(cmd, (uint8_t *)tx, op_code, AddrSel, tx_length);
     // printf("addsel = : %04x cmd_size =  : %d \r\n", AddrSel, cmd_size);
 
@@ -268,11 +268,12 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
-    uint16_t sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, ( cmd_size *4  ), cmd2 );
-    if (sent < 0) {
-        printf("Write-SM XFER DATA ERROR\n");
-    }
-    // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size*4 ,rx);
+    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2 );
+    // printf("sent = : %d \r\n",cmd_size );
+    // int recv = pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size ,rx);
+
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+
     // usleep(1000); // 데이터 전송 대기
     // // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
@@ -285,7 +286,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }
 
-static uint16_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
+static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
 #if (_WIZCHIP_QSPI_MODE_ == QSPI_SINGLE_MODE)
 
     pdst[0] = opcode;
