@@ -94,7 +94,11 @@ read_bits:
     jmp y-- read_bits       side 1
     in pins, 4              side 0 
 read_bits_fin:    
-    set x 0                 side 0
+    set pins 0              side 0
+    set pins 0              side 0
+    set pins 0              side 1
+    set pins 0              side 1
+    set pins 0              side 0
     set pins 0              side 0
      
  

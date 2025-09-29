@@ -92,8 +92,8 @@ int main() {
     int retval = 0;
 
     /* 강제종료를 막고 안전한 자원해제를 위함 */
-    // signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
-    // signal(SIGTERM, signal_handler);// 종료 시그널 처리 
+    signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
+    signal(SIGTERM, signal_handler);// 종료 시그널 처리 
     
     
 
@@ -114,19 +114,19 @@ int main() {
     wizchip_initialize();
     //    wizchip_reset() ;
     
-    // while(1){
-    //     // printf("cid = %02X \r\n", getCIDR());
+    while(1){
+        // printf("cid = %02X \r\n", getCIDR());
+        usleep(5000);
 
-    //     uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
-    //     setGUAR(ip);
-    //     usleep(100);
-    //     uint8_t getip[16]= {0xf00f0fff,}; 
-    //     getGUAR(getip);
-    //     printf("SIPR: %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
-    //     // sleep(1);
-    //     if(keep_running == 0) return 0  ; 
+        uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
+        setGUAR(ip);
+        usleep(5000);
+        uint8_t getip[16]= {0xf00f0fff,}; 
+        getGUAR(getip);
+        printf("SIPR: %08X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
+        if(keep_running == 0) return 0  ; 
 
-    // }
+    }
 
 
     printf("PIO 및 SM 초기화 완료\n");
