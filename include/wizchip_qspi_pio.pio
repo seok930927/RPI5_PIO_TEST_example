@@ -88,18 +88,17 @@ write_bits_end:
 read_byte_delay:
     set pindirs 0           side 0
 read_byte:
-    set x 0                 side 1
+    set x 0                 side 0
 read_bits:
+    set pins 0              side 0 
     in pins, 4              side 0 
     jmp y-- read_bits       side 1
-    in pins, 4              side 0 
+    set pins 0              side 0 
+    set pins 0              side 0 
+    set pins 0              side 0 
 read_bits_fin:    
     set pins 0              side 0
-    set pins 0              side 0
-    set pins 0              side 1
-    set pins 0              side 1
-    set pins 0              side 0
-    set pins 0              side 0
+
      
  
      

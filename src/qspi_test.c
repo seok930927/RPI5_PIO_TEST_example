@@ -95,7 +95,6 @@ int main() {
     signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
     signal(SIGTERM, signal_handler);// 종료 시그널 처리 
     
-    
 
     // chip = gpiod_chip_open_by_number(0);
     // if (!chip) {
@@ -113,7 +112,13 @@ int main() {
     pio_open_lihan(&pio_struct);
     wizchip_initialize();
     //    wizchip_reset() ;
-    
+    sleep(1);
+    printf("%04x\n", getCIDR());
+    printf("%04x\n", getCIDR());
+    printf("%08x\n", getCIDR());
+    printf("%04x\n", getCIDR());
+    printf("%04x\n", getCIDR());
+    sleep(1);    sleep(1);    sleep(1);    sleep(1);
     while(1){
         // printf("cid = %02X \r\n", getCIDR());
         usleep(5000);
@@ -203,5 +208,6 @@ int main() {
 void signal_handler(int sig) {
     (void)sig;
     printf("\n시그널 받음, 종료 중...\n");
+    pio_sm_set_enabled(pio_struct.pio, pio_struct.sm,false);
     keep_running = 0;
 }

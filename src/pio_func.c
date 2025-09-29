@@ -185,7 +185,7 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
 
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     uint32_t rx_buf32[2048] = {0,};
-    uint8_t cmd2[2048] ={0,};
+    uint8_t cmd2[2048] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     pio_read_byte(&pio_struct, op_code, AddrSel, cmd2, rx_length);
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     for(int i=0; i< rx_length; i++){
@@ -216,6 +216,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     for(int i=0; i< cmd_size; i++){
         cmd2[i] = ((uint8_t)(cmd[i] ) & 0x0f) <<4  |((uint8_t)(cmd[i] ) &0xf0) >>4;
     }
+    printf("cmd_size = : %d \r\n", rx_length);
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
     pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length ); // 80바이트 전송 준비
@@ -223,6 +224,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2);
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length ,rx);  // len은 4의배수만되네..    if (sent < 0) {
+        usleep(10); // 데이터 수신 대기
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
