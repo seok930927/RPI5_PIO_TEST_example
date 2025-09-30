@@ -249,7 +249,6 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2 );
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size ,rx);  
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-    __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
 
     // SM 비활성화
