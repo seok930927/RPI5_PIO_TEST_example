@@ -191,7 +191,8 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     for(int i=0; i< rx_length; i++){
         // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-        rx[i] = ((uint8_t)(cmd2[i] ) & 0x0f) <<4  |((uint8_t)(cmd2[i] ) &0xf0) >>4;
+        //rx[i] = ((uint8_t)(cmd2[i] ) & 0x0f) <<4  |((uint8_t)(cmd2[i] ) &0xf0) >>4;
+        rx[i] = (uint8_t)cmd2[i] & 0XFF;
         // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
     
@@ -267,6 +268,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size *4 , cmd );
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size *4  ,rx);  
+    usleep(5);
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
 

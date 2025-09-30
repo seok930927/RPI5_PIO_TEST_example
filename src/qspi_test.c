@@ -113,13 +113,16 @@ int main() {
     wizchip_initialize();
     //    wizchip_reset() ;
     sleep(1);
-    printf("%04x\n", getCIDR());
-    printf("%04x\n", getCIDR());
-    printf("%08x\n", getCIDR());
-    printf("%04x\n", getCIDR());
-    printf("%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%08x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
 
-
+sleep(1);
+sleep(1);
+sleep(1);
+sleep(1);
 
     while(1){
         // printf("cid = %02X \r\n", getCIDR());
