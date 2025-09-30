@@ -159,8 +159,8 @@ static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
     0x6004, //  1: out    pins, 4         side 0
     0x1041, //  2: jmp    x--, 1          side 1
     0xe000, //  3: set    pins, 0         side 0
-    0x006d, //  4: jmp    !y, 13          side 0
-    0xe080, //  5: set    pindirs, 0      side 0
+    0xe080, //  4: set    pindirs, 0      side 0
+    0x006d, //  5: jmp    !y, 13          side 0
     0xe020, //  6: set    x, 0            side 0
     0xe000, //  7: set    pins, 0         side 0
     0x4004, //  8: in     pins, 4         side 0

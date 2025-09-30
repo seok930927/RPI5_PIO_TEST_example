@@ -83,10 +83,10 @@ write_bits:
     out pins, 4             side 0
     jmp x-- write_bits      side 1
     set pins 0              side 0
-write_bits_end:
-    jmp !y read_bits_fin    side 0 
 read_byte_delay:
     set pindirs 0           side 0
+write_bits_end:
+    jmp !y read_bits_fin    side 0 
 read_byte:
     set x 0                 side 0
 read_bits:
@@ -98,6 +98,7 @@ read_bits:
     set pins 0              side 0 
 read_bits_fin:    
     set pins 0              side 0
+
 
      
  

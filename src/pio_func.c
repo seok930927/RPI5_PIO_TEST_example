@@ -70,7 +70,7 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset(&pioStruct->c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
     
-    sm_config_set_in_shift(&pioStruct->c, true, true, 32);
+    sm_config_set_in_shift(&pioStruct->c, true, true, 8);
     sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
@@ -219,7 +219,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     printf("cmd_size = : %d \r\n", rx_length);
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
-    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length *4     ); // 80바이트 전송 준비
+    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length     ); // 80바이트 전송 준비
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2);
@@ -246,8 +246,8 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     pio_init_lihan(pioStruct, true,  cmd_size ,rx_size);
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
-    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2 );
-    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size ,rx);  
+    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size *4 , cmd2 );
+    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size *4  ,rx);  
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
 
