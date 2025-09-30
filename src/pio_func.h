@@ -21,7 +21,7 @@
 #define QSPI_CS_PIN         16
 #define RESET_PIN           24
 
-#define CLKDIV       500// 더 안전한 클럭 분주비로 증가
+#define CLKDIV      10 // 더 안전한 클럭 분주비로 증가
 
 extern struct pio_struct_Lihan pio_struct ;
 
