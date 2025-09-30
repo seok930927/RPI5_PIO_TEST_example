@@ -71,7 +71,7 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
     
     sm_config_set_in_shift(&pioStruct->c, false, true, 8);
-    sm_config_set_out_shift(&pioStruct->c, true, true, 8);// 4바이트씩 shift
+    sm_config_set_out_shift(&pioStruct->c, false, true, 8);// 4바이트씩 shift
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -196,11 +196,15 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
 }
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
     uint32_t tx_convert32[2048] = {0,};
-    convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
+    uint8_t tx_convert8[2048] = {0,};
+    for(int i=0; i< tx_length; i++){
+        tx_convert8[i] = (tx[i]&0xf0)>>4 | (tx[i]&0x0f)<<4;
+    }
+    convert8to32(tx_convert8, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
     pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
-}
+}s
 
 __attribute__((optimize("O0")))
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length){
