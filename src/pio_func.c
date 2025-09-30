@@ -219,11 +219,11 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     printf("cmd_size = : %d \r\n", rx_length);
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
-    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length ); // 80바이트 전송 준비
+    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length *4     ); // 80바이트 전송 준비
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2);
-    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length ,rx);  // len은 4의배수만되네..    if (sent < 0) {
+    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length *4, rx);  // len은 4의배수만되네..    if (sent < 0) {
         usleep(10); // 데이터 수신 대기
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
@@ -249,6 +249,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd2 );
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size ,rx);  
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+    __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
 
     // SM 비활성화

@@ -119,6 +119,7 @@ int main() {
     printf("%04x\n", getCIDR());
     printf("%04x\n", getCIDR());
     sleep(1);    sleep(1);    sleep(1);    sleep(1);
+    sleep(1);    sleep(1);    sleep(1);    sleep(1);
     while(1){
         // printf("cid = %02X \r\n", getCIDR());
         usleep(5000);
