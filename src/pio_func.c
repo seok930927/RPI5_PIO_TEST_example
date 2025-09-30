@@ -11,7 +11,6 @@ void convert32to8(const uint32_t *src, uint8_t *dst, size_t count) {
 void convert8to32(const uint8_t *src, uint32_t *dst, size_t count) {
     for (size_t i = 0; i < count; i++) {
         dst[i] = ((uint32_t)src[i] );  // 상위 바이트는 자동으로 0
-        printf("[%d] %02X -> %08X \r\n", i, src[i], dst[i]);
     }
 }
 
@@ -190,10 +189,7 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
     pio_read_byte(&pio_struct, op_code, AddrSel, cmd2, rx_length);
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     for(int i=0; i< rx_length; i++){
-        // printf("cmd[%d] : %08X \r\n", i, cmd[i]);
-        //rx[i] = ((uint8_t)(cmd2[i] ) & 0x0f) <<4  |((uint8_t)(cmd2[i] ) &0xf0) >>4;
         rx[i] = (uint8_t)cmd2[i] & 0XFF;
-        // printf("cmd2[%d] : %08X \r\n", i, cmd2[i]);
     }
     
 
@@ -201,14 +197,7 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
     uint32_t tx_convert32[2048] = {0,};
     convert8to32(tx, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
-    printf("outbuf = ");
-    for(int i=0; i< (tx_length); i++){
-        printf(" %08X ", tx_convert32[i]);
-    }
-    printf("\r\n");
     pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
-    printf("tx_length = : %d \r\n", tx_length);
-    // printf("tx_length = : %d \r\n", tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
 }
@@ -221,8 +210,6 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     uint32_t recv_buf_32[2048] ={0,};
     
     uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
-    // printf(" op_code = : %02X \r\n", op_code);
-    // printf(" AddrSel = : %04X \r\n", AddrSel);
 
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
@@ -236,11 +223,9 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length *4, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
         usleep(10); // 데이터 수신 대기
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-    printf("recv = ");
     for(int i=0; i< rx_length *4; i++){
         rx[i] = (uint8_t)((recv_buf_32[i]) &0xff);
     }
-    printf("\r\n");
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
@@ -250,15 +235,9 @@ __attribute__((optimize("O0")))
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
     uint32_t cmd[2048] ={0,};
     uint32_t rx[16] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
- printf("tx = ");
-    for(int i=0; i< (tx_length); i++){
-        printf(" %08X ", tx[i]);
-    }
-    printf("\r\n");
 
     uint32_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
 
-    printf(" op_code = : %0d \r\n", tx_length);
     uint32_t cmd2[1024]= {NULL,};
    
 
@@ -300,17 +279,10 @@ static uint8_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) {
 
     pdst[4] = ((uint8_t)(addr >> 8) & 0xF0 )>>4 |((uint8_t)(addr >> 8) & 0xf ) << 4   ;
     pdst[5] = ((uint8_t)(addr >> 0) & 0xF0 )>>4 |((uint8_t)(addr >> 0) & 0xF ) << 4   ;
-printf("addr = %04X \r\n", addr);
-printf("pdst[4] = %02X \r\n", pdst[4]);
-printf("pdst[5] = %02X \r\n", pdst[5]);
-    // pdst[4] = ((uint8_t)(addr >> 0) &
     pdst[6] = 0 << (0);
 
 
 #if false
-    for(int i=0; i<6; i++) {
-        printf("%08X ", pdst[i]);
-    }
 #endif
     return 6 + 1;
 #endif
