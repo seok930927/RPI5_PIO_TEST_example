@@ -70,7 +70,7 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset(&pioStruct->c, 1, false, false);  // CLK를 sideset으로 사용
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
     
-    sm_config_set_in_shift(&pioStruct->c, false, true, 8);
+    sm_config_set_in_shift(&pioStruct->c, true, true, 32);
     sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 32비트 단위, auto-pull OFF
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
@@ -112,10 +112,10 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         pio_sm_clkdiv_restart(pioStruct->pio, pioStruct->sm);
                 // X레지스터 길이 지정 - X는  Max loop count        
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 512,2);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 512,1);  // 9개, 4바이트 단위
         if (rx_size > 0) {
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 512, 4);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 512, 1);  // 9개, 4바이트 단위
         }
 
         sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
@@ -215,27 +215,30 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
     uint32_t cmd[2048] ={0,};
     uint32_t cmd2[2048] ={0,};
-    uint32_t recv_buf_32[2048] ={0,};
+    uint8_t recv_buf_32[32] ={0,};  
+      int recv = 0 ; 
     
     uint8_t cmd_size = mk_cmd_buf_lihan((uint8_t*)cmd, op_code, AddrSel);
 
+    if (rx_length % 4 != 0) {
+        rx_length += 4 - (rx_length % 4); // 4의 배수로 맞춤
+    }   
 
-    // rx_length = 1 ;
-    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length   ); // 80바이트 전송 준비
-    
-    
+    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length); // 80바이트 전송 준비
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_irq_clear(true, 0));
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd);
-    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length *4, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
-    usleep(10); // 데이터 수신 대기
-
+    usleep(1); // 데이터 수신 대기
+    
+    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-    for(int i=0; i< rx_length; i++){
-        rx[i] = (uint8_t)((recv_buf_32[i]) &0xff);
+    
+    for(int i=0; i< rx_length ; i++){
+        rx[i] = ((recv_buf_32[i] &0x0f) << 4 | (recv_buf_32[i] &0xf0)>>4);
     }
+    // memcpy((uint8_t *)rx, (uint8_t *)recv_buf_32, rx_length );
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
@@ -251,33 +254,20 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     uint32_t cmd_size = mk_cmd_buf_include_data((uint8_t*)cmd, tx, op_code, AddrSel, tx_length);
 
     uint32_t cmd2[1024]= {NULL,};
-   
-    // cmd_size = 250; 
-    // uint8_t rx_size = 1; 
-    pio_init_lihan(pioStruct, true,  cmd_size ,1);
+
+    if (cmd_size % 4 != 0) {
+        cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
+    }   
+    
+    pio_init_lihan(pioStruct, true,  cmd_size ,0);
     int sent = 0 ; 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
-    // 7+ 16  23
-#if 1
-    while(sent < cmd_size){
-    
-        pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32   , cmd + sent );
-        sent += 32; 
-    }
+    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size , cmd );
 
-#else
-        pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32  , cmd + sent );
-        // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32   , cmd + sent );
-#endif 
-    // int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size   ,rx);  
-    usleep(500);
 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
-
-    // SM 비활성화
-    // pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }
 
 static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {

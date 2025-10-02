@@ -113,14 +113,10 @@ int main() {
     wizchip_initialize();
     //    wizchip_reset()
     // 
-    sleep(1);
 
     sleep(1);
     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-    printf("->>>>>>>>>>>>>>>>>>>%08x\n", getCIDR());
-    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+
 
     // sleep(1);
 
@@ -130,19 +126,19 @@ int main() {
 
     // sleep(1);
 
-    while(1){
-        // printf("cid = %02X \r\n", getCIDR());
-        usleep(5000);
+    // while(1){
+    //     // printf("cid = %02X \r\n", getCIDR());
+    //     usleep(5000);
 
-        uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
-        setGUAR(ip);
-        usleep(5000);
-        uint8_t getip[16]= {0xf00f0fff,}; 
-        getGUAR(getip);
-        printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
-        if(keep_running == 0) return 0  ; 
+    //     uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
+    //     setGUAR(ip);
+    //     usleep(5000);
+    //     uint8_t getip[16]= {0xf00f0fff,}; 
+    //     getGUAR(getip);
+    //     printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
+    //     if(keep_running == 0) return 0  ; 
 
-    }
+    // }
 
 
     printf("PIO 및 SM 초기화 완료\n");
@@ -164,41 +160,7 @@ int main() {
             while (1)
                 ;
         }
-        /*write SIPR[0:4] */
-        // gpiod_line_set_value(cs_line, 0);
-        // printf( " id = %08x\n", getCIDR());
-        // printf( " id = %08x\n", WIZCHIP_READ(0x00<< 8));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x01<< 8 ));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x02<< 8 ));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x03<< 8 ));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x04<< 8 ));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x05<< 8 ));
-        // printf( " id = %08x\n", WIZCHIP_READ(0x06<< 8 ));
-
-
-        // /* write Buffer TEST*/
-    //     uint8_t test_value[4] = {0x12,0x48,0x12,0x48};
-    //     setSIPR(test_value);
-    //     usleep(100);
-    //     // /*READ BUFFER TEST */
-    //     uint8_t sipr[4] = {0,};
-    //     getSIPR(sipr);
-    //     printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
-    // //    wizchip_reset() ;
-
-    //     getSIPR(sipr);
-    //     printf("SIPR: %02X %02X %02X %02X\n", sipr[0], sipr[1], sipr[2], sipr[3]);
-    //     usleep(1000000);
-
-
-        /*verify result*/
-#if 0
-         for(int i=0; i<16; i++) {
-             printf("%02X ", rx_buf[i]);
-         }
-         printf("\r\n");
-#endif 
-         
+       
 
         usleep(200);
     }
