@@ -131,37 +131,37 @@ void wizchip_initialize(void) {
     reg_wizchip_cs_cbfunc(wizchip_select, wizchip_deselect);
     printf("QSPI 콜백 함수 등록 성공--3223223\n");
 
-    /* W5x00, W6x00 initialize */
-    uint8_t temp;
-#if (_WIZCHIP_ == W5100S)
-    uint8_t memsize[2][4] = {{2, 2, 2, 2}, {2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W5500)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W6100)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W6300)
-    uint8_t memsize[2][8] = {{4, 4, 4, 4, 4, 4, 4, 4}, {4, 4, 4, 4, 4, 4, 4, 4}};
-#endif
-    usleep(1000000);
-    if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1) {
-#if _WIZCHIP_ <= W5500
-        printf(" W5x00 initialized fail\n");
-#else
-        printf(" W6x00 initialized fail\n");
-#endif
+//     /* W5x00, W6x00 initialize */
+//     uint8_t temp;
+// #if (_WIZCHIP_ == W5100S)
+//     uint8_t memsize[2][4] = {{2, 2, 2, 2}, {2, 2, 2, 2}};
+// #elif (_WIZCHIP_ == W5500)
+//     uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+// #elif (_WIZCHIP_ == W6100)
+//     uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+// #elif (_WIZCHIP_ == W6300)
+//     uint8_t memsize[2][8] = {{4, 4, 4, 4, 4, 4, 4, 4}, {4, 4, 4, 4, 4, 4, 4, 4}};
+// #endif
+//     usleep(1000000);
+//     if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1) {
+// #if _WIZCHIP_ <= W5500
+//         printf(" W5x00 initialized fail\n");
+// #else
+//         printf(" W6x00 initialized fail\n");
+// #endif
 
-        return;
-    }
+//         return;
+//     }
 
   
-    /* Check PHY link status */
-    do {
-        if (ctlwizchip(CW_GET_PHYLINK, (void *)&temp) == -1) {
-            printf(" Unknown PHY link status\n");
+//     /* Check PHY link status */
+//     do {
+//         if (ctlwizchip(CW_GET_PHYLINK, (void *)&temp) == -1) {
+//             printf(" Unknown PHY link status\n");
 
-            return;
-        }
-    } while (temp == PHY_LINK_OFF);
+//             return;
+//         }
+//     } while (temp == PHY_LINK_OFF);
 
 }
 
