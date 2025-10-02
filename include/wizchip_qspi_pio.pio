@@ -90,6 +90,7 @@ write_bits_end:
 read_byte:
     set x 0                 side 0
 read_bits:
+    set pins 0              side 0 
     in pins, 4              side 0 
     jmp y-- read_bits       side 1
     set pins 0              side 0 

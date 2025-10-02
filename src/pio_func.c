@@ -234,9 +234,8 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-
+    
     for(int i=0; i< rx_length ; i++){
-        printf("recv_buf_32[%d] : 0x%08X \n", i, recv_buf_32[i]);
         rx[i] = ((recv_buf_32[i] &0x0f) << 4 | (recv_buf_32[i] &0xf0)>>4);
     }
     // memcpy((uint8_t *)rx, (uint8_t *)recv_buf_32, rx_length );
