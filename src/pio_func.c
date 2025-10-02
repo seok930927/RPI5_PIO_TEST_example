@@ -215,7 +215,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
     uint32_t cmd[2048] ={0,};
     uint32_t cmd2[2048] ={0,};
-    uint8_t recv_buf_32[32] ={0,};  
+    uint8_t recv_buf_32[2048] ={0,};  
       int recv = 0 ; 
     
     uint8_t cmd_size = mk_cmd_buf_lihan((uint8_t*)cmd, op_code, AddrSel);

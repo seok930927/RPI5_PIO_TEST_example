@@ -162,7 +162,7 @@ int main() {
         }
        
 
-        usleep(200);
+        // usleep(2000000);
     }
     
     printf("\n정리 중...\n");
