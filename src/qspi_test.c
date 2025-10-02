@@ -111,32 +111,38 @@ int main() {
     // return cs_line;
     pio_open_lihan(&pio_struct);
     wizchip_initialize();
-    //    wizchip_reset() ;
-//     sleep(1);
-//     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-//     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-//     printf("->>>>>>>>>>>>>>>>>>>%08x\n", getCIDR());
-//     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
-//     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    //    wizchip_reset()
+    // 
+    sleep(1);
 
-// sleep(1);
-// sleep(1);
-// sleep(1);
-// sleep(1);
+    sleep(1);
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%08x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
 
-    // while(1){
-    //     // printf("cid = %02X \r\n", getCIDR());
-    //     usleep(5000);
+    // sleep(1);
 
-    //     uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
-    //     setGUAR(ip);
-    //     usleep(5000);
-    //     uint8_t getip[16]= {0xf00f0fff,}; 
-    //     getGUAR(getip);
-    //     printf("SIPR: %08X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X %04X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
-    //     if(keep_running == 0) return 0  ; 
+    // sleep(1);    sleep(1);
 
-    // }
+    // sleep(1);    sleep(1);
+
+    // sleep(1);
+
+    while(1){
+        // printf("cid = %02X \r\n", getCIDR());
+        usleep(5000);
+
+        uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
+        setGUAR(ip);
+        usleep(5000);
+        uint8_t getip[16]= {0xf00f0fff,}; 
+        getGUAR(getip);
+        printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
+        if(keep_running == 0) return 0  ; 
+
+    }
 
 
     printf("PIO 및 SM 초기화 완료\n");

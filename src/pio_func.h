@@ -21,7 +21,7 @@
 #define QSPI_CS_PIN         16
 #define RESET_PIN           24
 
-#define CLKDIV      15// 더 안전한 클럭 분주비로 증가
+#define CLKDIV      10// 더 안전한 클럭 분주비로 증가
 
 extern struct pio_struct_Lihan pio_struct ;
 
@@ -33,7 +33,7 @@ struct pio_struct_Lihan{
 };
 
 
-static uint8_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) ;
+static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) ;
 void signal_handler(int sig);
 
 
@@ -43,7 +43,7 @@ void wiznet_spi_pio_write_byte( uint8_t op_code, uint16_t AddrSel, uint8_t *tx, 
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length);
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length);
 
-static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf,
+static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf,
                                         uint32_t *databuf, 
                                         uint8_t opcode, 
                                         uint16_t rag_addr,  

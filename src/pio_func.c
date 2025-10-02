@@ -71,7 +71,7 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     sm_config_set_sideset_pins(&pioStruct->c, QSPI_CLOCK_PIN);    // CLK 핀 설정
     
     sm_config_set_in_shift(&pioStruct->c, false, true, 8);
-    sm_config_set_out_shift(&pioStruct->c, true, true, 8);// 4바이트씩 shift
+    sm_config_set_out_shift(&pioStruct->c, true, true, 32);// 32비트 단위, auto-pull OFF
 
     // RP2350 스타일 PIO 설정 (QSPI Quad 모드)
     printf("\r\n[QSPI QUAD MODE]\r\n");
@@ -186,11 +186,15 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
     // convert8to32(rx, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
     uint32_t rx_buf32[2048] = {0,};
     uint8_t cmd2[2048] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    pio_read_byte(&pio_struct, op_code, AddrSel, cmd2, rx_length);
+    pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
+    // memcpy((uint8_t *)rx, (uint32_t *)rx_buf32, rx_length );
     // convert32to8(rx_buf32, (uint8_t *)rx, rx_length); // 32비트 배열을 8비트 배열로 변환
-    for(int i=0; i< rx_length; i++){
-        rx[i] = (uint8_t)cmd2[i] & 0XFF;
-    }
+    // for(int i=0; i< rx_length; i++){
+    //     printf("rx_buf32[%d] : 0x%08X \n", i, rx[i]);
+    // }
+    // for(int i=0; i< rx_length; i++){
+    //     rx[i] = (uint8_t)cmd2[i] & 0XFF;
+    // }
     
 
 }
@@ -200,8 +204,8 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
     for(int i=0; i< tx_length; i++){
         tx_convert8[i] = (tx[i]&0xf0)>>4 | (tx[i]&0x0f)<<4;
     }
-    convert8to32(tx_convert8, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
-    pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert32, tx_length);
+    //  convert8to32(tx_convert8, (uint32_t *)tx_convert32, tx_length); // 32비트 배열을 8비트 배열로 변환
+    pio_write_byte(&pio_struct, op_code, AddrSel, tx_convert8, tx_length);
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
 }
@@ -213,21 +217,23 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     uint32_t cmd2[2048] ={0,};
     uint32_t recv_buf_32[2048] ={0,};
     
-    uint8_t cmd_size = mk_cmd_buf_lihan(cmd, op_code, AddrSel);
+    uint8_t cmd_size = mk_cmd_buf_lihan((uint8_t*)cmd, op_code, AddrSel);
 
 
-    __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
-
-    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length     ); // 80바이트 전송 준비
+    // rx_length = 1 ;
+    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length   ); // 80바이트 전송 준비
     
     
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+    // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_irq_clear(true, 0));
     int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd);
     int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length *4, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
     usleep(10); // 데이터 수신 대기
+
+
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-    for(int i=0; i< rx_length *4; i++){
+    for(int i=0; i< rx_length; i++){
         rx[i] = (uint8_t)((recv_buf_32[i]) &0xff);
     }
 
@@ -236,22 +242,37 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 }
 
 __attribute__((optimize("O0")))
+
+
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
     uint32_t cmd[2048] ={0,};
     uint32_t rx[16] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-    uint32_t cmd_size = mk_cmd_buf_include_data(cmd, tx, op_code, AddrSel, tx_length);
+    uint32_t cmd_size = mk_cmd_buf_include_data((uint8_t*)cmd, tx, op_code, AddrSel, tx_length);
 
     uint32_t cmd2[1024]= {NULL,};
    
-
-    uint8_t rx_size = 0; 
-    pio_init_lihan(pioStruct, true,  cmd_size ,rx_size);
-    
+    // cmd_size = 250; 
+    // uint8_t rx_size = 1; 
+    pio_init_lihan(pioStruct, true,  cmd_size ,1);
+    int sent = 0 ; 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
-    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size *4 , cmd );
-    int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size *4  ,rx);  
-    usleep(5);
+
+    // 7+ 16  23
+#if 1
+    while(sent < cmd_size){
+    
+        pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32   , cmd + sent );
+        sent += 32; 
+    }
+
+#else
+        pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32  , cmd + sent );
+        // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, 32   , cmd + sent );
+#endif 
+    // int recv =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size   ,rx);  
+    usleep(500);
+
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
 
@@ -259,7 +280,7 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     // pio_init_lihan(pioStruct, false, 0 ,0); // 80바이트 전송 종료
 }
 
-static uint8_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) {
+static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
 #if (_WIZCHIP_QSPI_MODE_ == QSPI_SINGLE_MODE)
 
     pdst[0] = opcode;
@@ -295,7 +316,7 @@ static uint8_t mk_cmd_buf_lihan(uint32_t *pdst, uint8_t opcode, uint16_t addr) {
 
 
 
-static uint16_t mk_cmd_buf_include_data(uint32_t *outbuf, 
+static uint16_t mk_cmd_buf_include_data(uint8_t *outbuf, 
                                         uint32_t *databuf, 
                                         uint8_t opcode, 
                                         uint16_t rag_addr,  
