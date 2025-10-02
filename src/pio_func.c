@@ -112,10 +112,10 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         pio_sm_clkdiv_restart(pioStruct->pio, pioStruct->sm);
                 // X레지스터 길이 지정 - X는  Max loop count        
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 512,1);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, tx_size,1);  // 9개, 4바이트 단위
         if (rx_size > 0) {
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 512, 1);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size, 1);  // 9개, 4바이트 단위
         }
 
         sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
@@ -145,7 +145,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         if (rx_size > 0) {
 
             // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 );               // TX FIFO <= 값
+            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 ) ;               // TX FIFO <= 값
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
@@ -209,13 +209,40 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
     // convert32to8(tx_convert32, (uint8_t *)tx, tx_length); // 32비트 배열을 8비트 배열로 변환
 
 }
+#include <pthread.h>
+// 쓰레드 인자 구조체
+typedef struct {
+    PIO pio;
+    uint sm;
+    // enum pio_dir direction;
+    size_t byte_count;
+    void *buffer;
+    int result;
+} xfer_thread_args_t;
+
+// TX 쓰레드 함수
+void* tx_thread_func(void* arg) {
+    xfer_thread_args_t *args = (xfer_thread_args_t*)arg;
+    args->result = pio_sm_xfer_data(args->pio, args->sm,PIO_DIR_TO_SM, 
+                                     args->byte_count, args->buffer);
+    return NULL;
+}
+
+// RX 쓰레드 함수
+void* rx_thread_func(void* arg) {
+    xfer_thread_args_t *args = (xfer_thread_args_t*)arg;
+    args->result = pio_sm_xfer_data(args->pio, args->sm, PIO_DIR_FROM_SM, 
+                                     args->byte_count, args->buffer);
+    return NULL;
+}
+
 
 __attribute__((optimize("O0")))
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length){
 
     uint32_t cmd[2048] ={0,};
     uint32_t cmd2[2048] ={0,};
-    uint8_t recv_buf_32[2048] ={0,};  
+    uint32_t recv_buf_32[2048] ={0,};  
       int recv = 0 ; 
     
     uint8_t cmd_size = mk_cmd_buf_lihan((uint8_t*)cmd, op_code, AddrSel);
@@ -225,18 +252,64 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     }   
 
     pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length); // 80바이트 전송 준비
-    
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
-    // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_irq_clear(true, 0));
-    int sent =  pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size*4, cmd);
-    usleep(1); // 데이터 수신 대기
-    
-    pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length, recv_buf_32);  // len은 4의배수만되네..    if (sent < 0) {
 
+
+      if (cmd_size % 4 != 0) {
+        cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
+    }   
+    // 쓰레드 인자 준비
+    xfer_thread_args_t tx_args = {
+        .pio = pioStruct->pio,
+        .sm = pioStruct->sm,
+        
+        .byte_count = cmd_size,
+        .buffer = cmd,
+        .result = 0
+    };
+    
+    xfer_thread_args_t rx_args = {
+        .pio = pioStruct->pio,
+        .sm = pioStruct->sm,
+        .byte_count = rx_length,
+        .buffer = recv_buf_32,
+        .result = 0
+    };
+    
+    pthread_t tx_thread, rx_thread;
+    
+
+
+
+
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+    // usleep(30); // 데이터 수신 대기
+    // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_irq_clear(true, 0));
+    // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size, cmd);
+    // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length, recv_buf_32 );  // len은 4의배수만되네..    if (sent < 0) {
+   // 두 쓰레드를 거의 동시에 시작
+   pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX 먼저
+   pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX 바로 다음
+   pthread_join(rx_thread, NULL);
+   pthread_join(tx_thread, NULL);
+    // usleep(30); // 데이터 수신 대기
+    
+    // 두 쓰레드 완료 대기
+  
+    if (rx_length > 30){
+        
+            printf("recv_buf = ");
+
+        for(int i=30 ; i< 40 ; i++){
+            printf("[%d] : 0x%02X \n", i, ((uint8_t*)recv_buf_32)[i]);
+        }
+            printf("\n");
+        printf("rx_length = %d \n", rx_length);
+
+    }
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
     
     for(int i=0; i< rx_length ; i++){
-        rx[i] = ((recv_buf_32[i] &0x0f) << 4 | (recv_buf_32[i] &0xf0)>>4);
+        rx[i] = ((((uint8_t*)recv_buf_32)[i] &0x0f) << 4 | (((uint8_t*)recv_buf_32)[i] &0xf0)>>4);
     }
     // memcpy((uint8_t *)rx, (uint8_t *)recv_buf_32, rx_length );
 

@@ -123,4 +123,12 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.o: \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/./W6300/w6300.h \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
- /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h
+ /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
+ /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/aarch64-linux-gnu/bits/sched.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_sched_param.h \
+ /usr/include/aarch64-linux-gnu/bits/cpu-set.h \
+ /usr/include/aarch64-linux-gnu/bits/setjmp.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+ /usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+ /usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h

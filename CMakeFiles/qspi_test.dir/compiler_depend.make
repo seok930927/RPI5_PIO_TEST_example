@@ -284,7 +284,16 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.o: src/pio_func.c \
   lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
   lib/ioLibrary_Driver/Ethernet/W6300/w6300.h \
   lib/ioLibrary_Driver/Ethernet/wizchip_conf.h \
-  lib/ioLibrary_Driver/Application/Application.h
+  lib/ioLibrary_Driver/Application/Application.h \
+  /usr/include/pthread.h \
+  /usr/include/sched.h \
+  /usr/include/aarch64-linux-gnu/bits/sched.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct_sched_param.h \
+  /usr/include/aarch64-linux-gnu/bits/cpu-set.h \
+  /usr/include/aarch64-linux-gnu/bits/setjmp.h \
+  /usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h
 
 CMakeFiles/qspi_test.dir/src/qspi_test.c.o: src/qspi_test.c \
   /usr/include/stdc-predef.h \
@@ -585,6 +594,16 @@ include/board_list.h:
 
 src/qspi_test.c:
 
+/usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h:
+
+/usr/include/aarch64-linux-gnu/bits/cpu-set.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/struct_sched_param.h:
+
+/usr/include/sched.h:
+
+/usr/include/pthread.h:
+
 /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h:
 
 /usr/include/time.h:
@@ -632,6 +651,8 @@ lib/ioLibrary_Driver/Ethernet/W6300/w6300.h:
 lib/ioLibrary_Driver/Ethernet/wizchip_conf.h:
 
 /usr/include/aarch64-linux-gnu/bits/types/time_t.h:
+
+/usr/include/aarch64-linux-gnu/bits/sched.h:
 
 lib/ioLibrary_Driver/Application/loopback/loopback.h:
 
@@ -733,6 +754,8 @@ utils/piolib/include/hardware/pio.h:
 
 /usr/lib/linux/uapi/arm64/asm/sve_context.h:
 
+/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
 /usr/include/aarch64-linux-gnu/bits/struct_rwlock.h:
 
 lib/ioLibrary_Driver/Ethernet/socket.c:
@@ -748,6 +771,8 @@ utils/piolib/include/pio_platform.h:
 /usr/include/aarch64-linux-gnu/bits/typesizes.h:
 
 /usr/include/aarch64-linux-gnu/sys/procfs.h:
+
+/usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
 /usr/include/inttypes.h:
 
@@ -780,6 +805,8 @@ utils/piolib/include/pio_platform.h:
 /usr/include/aarch64-linux-gnu/bits/pthreadtypes.h:
 
 /usr/include/aarch64-linux-gnu/bits/sigstack.h:
+
+/usr/include/aarch64-linux-gnu/bits/setjmp.h:
 
 /usr/include/aarch64-linux-gnu/bits/types.h:
 
