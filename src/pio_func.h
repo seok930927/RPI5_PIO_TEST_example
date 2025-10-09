@@ -6,8 +6,8 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <string.h>
-#include "../utils/piolib/include/piolib.h"
-#include "../include/wizchip_qspi_pio.pio.h"
+#include "piolib.h"
+#include "wizchip_qspi_pio.pio.h"
 #include <gpiod.h>
 #include "Ethernet/socket.h"
 

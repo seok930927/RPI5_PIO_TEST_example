@@ -5,8 +5,8 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <string.h>
-#include "../utils/piolib/include/piolib.h"
-#include "../include/wizchip_qspi_pio.pio.h"
+#include "piolib.h"
+#include "wizchip_qspi_pio.pio.h"
 #include <gpiod.h>
 #include "Ethernet/socket.h"
 #include "pio_func.h"
@@ -14,18 +14,6 @@
 #include "wizchip_spi.h"
 #include "loopback.h"
 
-
-// struct pio_struct_Lihan pio_struct ;
-
-// QSPI 모드 정의 (wizchip_qspi_pio.h와 호환) 
-// #define QSPI_SINGLE_MODE    1
-// #define QSPI_DUAL_MODE      2
-// #define QSPI_QUAD_MODE      4
-
-
-// #define _W6300_SPI_OP_          _WIZCHIP_SPI_VDM_OP_
-// #define _W6300_SPI_READ_                  (0x00 << 5)  |  0x80     ///< SPI interface Read operation in Control Phase
-// #define _W6300_SPI_WRITE_                 (0x01 << 5)  |  0x80     ///< SPI interface Write operation in Control Phase
 
 
 static wiz_NetInfo g_net_info = {
@@ -99,8 +87,8 @@ int main() {
     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
 
     network_initialize(g_net_info);
-
     print_network_information(g_net_info);
+
 #if 0
     while(1){
         // printf("cid = %02X \r\n", getCIDR());
@@ -118,8 +106,6 @@ int main() {
 #endif 
 
     while (keep_running) {
-
-
                 /* TCP server loopback test */
         if ((retval = loopback_tcps(0, g_tcp_server_buf, 5000)) < 0) {
             printf(" loopback_tcps error : %d\n", retval);
@@ -127,7 +113,6 @@ int main() {
             while (1)
                 ;
         }
-       
     }
     
     printf("\n정리 중...\n");
@@ -135,9 +120,7 @@ int main() {
     pio_remove_program(pio_struct.pio, &wizchip_pio_spi_quad_write_read_program, pio_struct.offset);
     pio_sm_unclaim(pio_struct.pio, pio_struct.sm);
     pio_close(pio_struct.pio);
-    // gpiod 해제
-    // gpiod_line_release(cs_line);
-    // gpiod_chip_close(chip);
+
     printf("완료\n");
     return 0;
 

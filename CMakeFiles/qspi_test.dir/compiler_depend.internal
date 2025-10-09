@@ -280,7 +280,6 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.o
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/pio_platform.h
  /home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.h
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/hardware/pio.h
- /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/piolib.h
  /usr/include/gpiod.h
  /usr/include/time.h
  /usr/include/aarch64-linux-gnu/bits/time.h
@@ -432,7 +431,6 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/pio_platform.h
  /home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.h
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/hardware/pio.h
- /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/piolib.h
  /usr/include/gpiod.h
  /usr/include/time.h
  /usr/include/aarch64-linux-gnu/bits/time.h
@@ -586,7 +584,6 @@ CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/pio_platform.h
  /home/lihan/pio_qspi/qspi_pio/include/wizchip_qspi_pio.pio.h
  /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/hardware/pio.h
- /home/lihan/pio_qspi/qspi_pio/utils/piolib/include/piolib.h
  /usr/include/gpiod.h
  /usr/include/time.h
  /usr/include/aarch64-linux-gnu/bits/time.h

@@ -274,7 +274,6 @@ CMakeFiles/qspi_test.dir/src/pio_func.c.o: src/pio_func.c \
   utils/piolib/include/pio_platform.h \
   include/wizchip_qspi_pio.pio.h \
   utils/piolib/include/hardware/pio.h \
-  utils/piolib/include/piolib.h \
   /usr/include/gpiod.h \
   /usr/include/time.h \
   /usr/include/aarch64-linux-gnu/bits/time.h \
@@ -425,7 +424,6 @@ CMakeFiles/qspi_test.dir/src/qspi_test.c.o: src/qspi_test.c \
   utils/piolib/include/pio_platform.h \
   include/wizchip_qspi_pio.pio.h \
   utils/piolib/include/hardware/pio.h \
-  utils/piolib/include/piolib.h \
   /usr/include/gpiod.h \
   /usr/include/time.h \
   /usr/include/aarch64-linux-gnu/bits/time.h \
@@ -578,7 +576,6 @@ CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: src/wizchip_spi.c \
   utils/piolib/include/pio_platform.h \
   include/wizchip_qspi_pio.pio.h \
   utils/piolib/include/hardware/pio.h \
-  utils/piolib/include/piolib.h \
   /usr/include/gpiod.h \
   /usr/include/time.h \
   /usr/include/aarch64-linux-gnu/bits/time.h \
