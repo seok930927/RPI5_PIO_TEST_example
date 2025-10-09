@@ -115,7 +115,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, tx_size,1);  // 9개, 4바이트 단위
         if (rx_size > 0) {
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size, 1);  // 9개, 4바이트 단위
+        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size,4);  // 9개, 4바이트 단위
         }
 
         sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
@@ -276,42 +276,26 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     };
     
     pthread_t tx_thread, rx_thread;
-    
 
 
-
-
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     // usleep(30); // 데이터 수신 대기
     // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_irq_clear(true, 0));
     // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size, cmd);
     // pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_length, recv_buf_32 );  // len은 4의배수만되네..    if (sent < 0) {
-   // 두 쓰레드를 거의 동시에 시작
-   pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX 먼저
-   pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX 바로 다음
-   pthread_join(rx_thread, NULL);
-   pthread_join(tx_thread, NULL);
+        // 두 쓰레드를 거의 동시에 시작
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+    pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX 먼저
+    pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX 바로 다음
+    // 두 쓰레드 완료 대기
+    pthread_join(rx_thread, NULL);
+    pthread_join(tx_thread, NULL);
     // usleep(30); // 데이터 수신 대기
     
-    // 두 쓰레드 완료 대기
-  
-    if (rx_length > 30){
-        
-            printf("recv_buf = ");
-
-        for(int i=30 ; i< 40 ; i++){
-            printf("[%d] : 0x%02X \n", i, ((uint8_t*)recv_buf_32)[i]);
-        }
-            printf("\n");
-        printf("rx_length = %d \n", rx_length);
-
-    }
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
     
     for(int i=0; i< rx_length ; i++){
         rx[i] = ((((uint8_t*)recv_buf_32)[i] &0x0f) << 4 | (((uint8_t*)recv_buf_32)[i] &0xf0)>>4);
     }
-    // memcpy((uint8_t *)rx, (uint8_t *)recv_buf_32, rx_length );
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 

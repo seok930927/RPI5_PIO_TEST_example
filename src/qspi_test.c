@@ -81,10 +81,7 @@ static volatile int keep_running = 1;
 uint8_t tx_buf[16];
 uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};  ;
 
-// struct gpiod_chip *chip;
-// struct gpiod_line *cs_line;
 
-// int main(int argc, char *argv[]) {
 int main() {
     // printf("test start  \r\n");
     uint16_t ADDR =  0X4138; //SiPR 
@@ -95,60 +92,30 @@ int main() {
     signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
     signal(SIGTERM, signal_handler);// 종료 시그널 처리 
     
-
-    // chip = gpiod_chip_open_by_number(0);
-    // if (!chip) {
-    //     fprintf(stderr, "gpiod_chip_open_by_number 실패\n");
-    //     exit(1);
-    // }
-    
-    // cs_line = gpiod_chip_get_line(chip, QSPI_CS_PIN);
-    // if (!cs_line || gpiod_line_request_output(cs_line, "qspi_cs", 1) < 0) {
-    //     fprintf(stderr, "CS 핀 초기화 실패\n");
-    //     gpiod_chip_close(chip);
-    //     exit(1);
-    // }
-    // return cs_line;
     pio_open_lihan(&pio_struct);
     wizchip_initialize();
-    //    wizchip_reset()
-    // 
 
     sleep(1);
     printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
 
-
-    // sleep(1);
-
-    // sleep(1);    sleep(1);
-
-    // sleep(1);    sleep(1);
-
-    // sleep(1);
-
-    // while(1){
-    //     // printf("cid = %02X \r\n", getCIDR());
-    //     usleep(5000);
-
-    //     uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
-    //     setGUAR(ip);
-    //     usleep(5000);
-    //     uint8_t getip[16]= {0xf00f0fff,}; 
-    //     getGUAR(getip);
-    //     printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
-    //     if(keep_running == 0) return 0  ; 
-
-    // }
-
-
-    printf("PIO 및 SM 초기화 완료\n");
-    // reg_wizchip_qspi_cbfunc(wiznet_spi_pio_read_byte, wiznet_spi_pio_write_byte);
-    printf("QSPI 콜백 함수 등록 완료\n");
-    printf("QSPI 콜백 함수 등록 완료\n");
-
     network_initialize(g_net_info);
 
     print_network_information(g_net_info);
+#if 0
+    while(1){
+        // printf("cid = %02X \r\n", getCIDR());
+        usleep(5000);
+
+        uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
+        setGUAR(ip);
+        usleep(5000);
+        uint8_t getip[16]= {0xf00f0fff,}; 
+        getGUAR(getip);
+        printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
+        if(keep_running == 0) return 0  ; 
+
+    }
+#endif 
 
     while (keep_running) {
 
@@ -161,8 +128,6 @@ int main() {
                 ;
         }
        
-
-        // usleep(2000000);
     }
     
     printf("\n정리 중...\n");
