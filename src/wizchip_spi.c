@@ -99,12 +99,12 @@ struct gpiod_line *RST_line;
     ----------------------------------------------------------------------------------------------------
 */
 static inline void wizchip_select(void) {
-        usleep(10);
+        // usleep(10);
        gpiod_line_set_value(cs_line, 0);
 }
 
 static inline void wizchip_deselect(void) {
-        usleep(10);
+        // usleep(10);
         gpiod_line_set_value(cs_line, 1);
 }
 
@@ -148,15 +148,8 @@ void wizchip_initialize(void) {
 
     /* W5x00, W6x00 initialize */
     uint8_t temp;
-#if (_WIZCHIP_ == W5100S)
-    uint8_t memsize[2][4] = {{2, 2, 2, 2}, {2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W5500)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W6100)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-#elif (_WIZCHIP_ == W6300)
-    uint8_t memsize[2][8] = {{4, 4, 4, 4, 4, 4, 4, 4}, {4, 4, 4, 4, 4, 4, 4, 4}};
-#endif
+
+    uint8_t memsize[2][8] = {{16,16, 0,0, 0,0,0,0}, {16,16, 0,0, 0,0,0,0}};
     usleep(1000000);
     if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1) {
 #if _WIZCHIP_ <= W5500
