@@ -12,3 +12,7 @@ Makefile
 *.tmp
 *.swp
 *~
+
+
+loopback
+qspi_test
