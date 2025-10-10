@@ -1,14 +1,21 @@
 diff --git a/Application/loopback/loopback.c b/Application/loopback/loopback.c
-index a199755..dc361c0 100644
+index a199755..6328679 100644
 --- a/Application/loopback/loopback.c
 +++ b/Application/loopback/loopback.c
-@@ -4,6 +4,8 @@
+@@ -4,12 +4,14 @@
  #include "wizchip_conf.h"
  
  
 +#define close wiz_close
 +
  #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
+ 
+ 
+ static int8_t loopback_mode = 0 ;
+ 
+-
++#define _LOOPBACK_DEBUG_
+ 
  
  
 diff --git a/Ethernet/socket.c b/Ethernet/socket.c
