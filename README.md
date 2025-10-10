@@ -126,24 +126,32 @@ make run-w5500
 <img width="519" height="516" alt="image" src="https://github.com/user-attachments/assets/9801c13d-4829-4002-ab49-7f1948d2e2c6" />
 
 
+## IoLibrary 연동
+IoLibrary에서 사용되는 close() 함수와 동일한 이름을 가진 함수를 리눅스 표준 헤더인 unistd.h에서도 정의해두었고, 중복정의 에러발생
+IoLibrary에 전처리기를 이용하여 close() 함수의 이름을 wiz_close()로 변경. 
+
+git clone을한다음 patch를 적용할 수 있도록  파일을 만들어두었음.
+
+```c++
+ #define close wiz_close
+```
 
 
 
+## loopback TEST
+
+
+<img width="550" height="506" alt="image" src="https://github.com/user-attachments/assets/78842ec2-e648-4271-aaa9-0be1b1b359cb" />
+
+<img width="617" height="429" alt="image" src="https://github.com/user-attachments/assets/d30693bd-d39a-4d7d-ab14-3f83d7cca144" />
+
+
+## performance 
+22Mhz 까지 정상동작하는것을 확인하였음
 
 
 ## 다음 STEP
-- IoLibrary 연동
-- loopback TEST
+- 최적화 진행.
 - TOE performance  측정
 - Linux QSPI(using PIO) 드라이버 작성
 - Linux W6300 드라이버 작성 
-
-## 이슈 
-- DMA 이슈 - 32비트로 읽거나, 써줘야 정상적인 동작을 함
- - 0x12 ,0x48, 0x12, 0x48를 쓰고 싶을떄
- - DMA 에게 0x12000000, 0x48000000,0x12000000, 0x48000000 을 담아 주어야함.
-  
-- 클럭 수 불일치
-  - 읽기동작 후 1개의 비트가 추가적으로발생함.
-  - 읽기 동작을 하지않아도 클럭이 2회 발생함.
-
