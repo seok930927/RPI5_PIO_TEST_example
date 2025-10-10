@@ -1,3 +1,4 @@
+
 # QSPI PIO 통신
 
 Raspberry Pi 5 (RP1 칩) 전용 PIO 기반 QSPI 통신 구현
@@ -148,6 +149,18 @@ git clone을한다음 patch를 적용할 수 있도록  파일을 만들어두�
 
 ## performance 
 22Mhz 까지 정상동작하는것을 확인하였음
+
+## How To Start 
+
+```bash 
+git clone --recursive https://github.com/seok930927/RPI5_PIO_TEST_example.git
+cd RPI5_PIO_TEST_example/
+sudo ./patch.sh
+cmake . && make
+sudo ./qspi_test
+
+```
+
 
 
 ## 다음 STEP
