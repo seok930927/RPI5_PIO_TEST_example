@@ -12,19 +12,19 @@ file(GLOB IO_LIB_SRC lib/ioLibrary_Driver/Ethernet/*.c)
 file(GLOB W6300_SRC lib/ioLibrary_Driver/Ethernet/W6300/*.c)
 file(GLOB LIB_loopback lib/ioLibrary_Driver/Application/loopback/*.c)
 # 실행 파일 생성
-add_executable(qspi_test 
-            src/qspi_test.c 
+add_executable(loopback 
+            src/loopback_test.c 
             src/pio_func.c 
             src/wizchip_spi.c
-            include/wizchip_qspi_pio.pio.c 
+            inc/wizchip_qspi_pio.pio.c 
             ${IO_LIB_SRC} 
             ${LIB_loopback} 
             ${W6300_SRC})
 
 # PIOLib 헤더 포함
-target_include_directories(qspi_test PRIVATE 
-    ${PIOLIB_PATH}/include
-    include
+target_include_directories(loopback PRIVATE 
+    ${PIOLIB_PATH}/inc
+    inc
     lib/ioLibrary_Driver/
     lib/ioLibrary_Driver/Ethernet
     lib/ioLibrary_Driver/Application/loopback
@@ -35,16 +35,16 @@ target_include_directories(qspi_test PRIVATE
 add_subdirectory(utils/piolib)
 
 # PIOLib 정적 라이브러리 링크
-target_link_libraries(qspi_test 
+target_link_libraries(loopback 
     pio
     gpiod
 )
 
 # qspi_test가 piolib 빌드 완료 후에 빌드되도록 의존성 설정
-add_dependencies(qspi_test pio)
+add_dependencies(loopback pio)
 
 # 컴파일 옵션
-target_compile_options(qspi_test PRIVATE -Wall -Wextra -O0)
+target_compile_options(loopback PRIVATE -Wall -Wextra -O0)
 
 # 설치 설정
-install(TARGETS qspi_test DESTINATION bin)
+install(TARGETS loopback DESTINATION bin)
