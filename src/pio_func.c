@@ -84,7 +84,10 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
     // #include "hardware/clocks.h"
     uint32_t sys_hz = clock_get_hz(clk_sys);
-    printf("System Clock: %d Hz\n", sys_hz);
+    printf("System Clock: %f MHz\n", ((float) sys_hz) / (1000 * 1000));
+    printf("CLKDIV: %f\n", (float)CLKDIV);
+    printf("QSPI Clock: %f MHz\n", ((float)sys_hz /(float) CLKDIV) / (1000 * 1000) / 2); // CLKDIV가 2배 빠르므로 2로 나눔
+
     // Quad SPI를 위한 추가 설정
     sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
     sm_config_set_in_pins(&pioStruct->c, QSPI_DATA_IO0_PIN);        // 입력 핀
