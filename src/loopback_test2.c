@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <string.h>
+#include "piolib.h"
+#include "wizchip_qspi_pio.pio.h"
+#include <gpiod.h>
+#include "Ethernet/socket.h"
+#include "pio_func.h"
+#include "wizchip_conf.h"
+#include "wizchip_spi.h"
+#include "loopback.h"
+
+
+
+static wiz_NetInfo g_net_info = {
+    .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
+    .ip = {192, 168, 11, 2},                     // IP address
+    .sn = {255, 255, 255, 0},                    // Subnet Mask
+    .gw = {192, 168, 11, 1},                     // Gateway
+    .dns = {8, 8, 8, 8},                         // DNS server
+#if _WIZCHIP_ > W5500
+    .lla = {
+        0xfe, 0x80, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x02, 0x08, 0xdc, 0xff,
+        0xfe, 0x57, 0x57, 0x25
+    },             // Link Local Address
+    .gua = {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // Global Unicast Address
+    .sn6 = {
+        0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // IPv6 Prefix
+    .gw6 = {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    },             // Gateway IPv6 Address
+    .dns6 = {
+        0x20, 0x01, 0x48, 0x60,
+        0x48, 0x60, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x88, 0x88
+    },             // DNS6 server
+    .ipmode = NETINFO_STATIC_ALL
+#else
+    .dhcp = NETINFO_STATIC
+#endif
+};
+
+/* Loopback */
+static uint8_t g_tcp_server_buf[1024 *2] = {
+    0,
+};
+
+static volatile int keep_running = 1;
+
+uint8_t tx_buf[16];
+uint32_t rx_buf[128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};  ;
+
+
+int main() {
+    // printf("test start  \r\n");
+    uint16_t ADDR =  0X4138; //SiPR 
+
+    int retval = 0;
+
+    /* 강제종료를 막고 안전한 자원해제를 위함 */
+    signal(SIGINT, signal_handler); // Ctrl+C 시그널 처리
+    signal(SIGTERM, signal_handler);// 종료 시그널 처리 
+    
+    pio_open_lihan(&pio_struct);
+    wizchip_initialize();
+
+    sleep(1);
+    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+
+    network_initialize(g_net_info);
+    print_network_information(g_net_info);
+
+#if 0
+    while(1){
+        // printf("cid = %02X \r\n", getCIDR());
+        usleep(5000);
+
+        uint8_t ip[16] = {0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8,0x1, 0x2, 0x4, 0x8};
+        setGUAR(ip);
+        usleep(5000);
+        uint8_t getip[16]= {0xf00f0fff,}; 
+        getGUAR(getip);
+        printf("SIPR: %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X %08X\n", getip[0], getip[1], getip[2], getip[3], getip[4], getip[5], getip[6], getip[7], getip[8], getip[9], getip[10], getip[11], getip[12], getip[13], getip[14], getip[15]);
+        if(keep_running == 0) return 0  ; 
+
+    }
+#endif 
+
+    while (keep_running) {
+                /* TCP server loopback test */
+        if ((retval = loopback_tcps(0, g_tcp_server_buf, 5000)) < 0) {
+            printf(" loopback_tcps error : %d\n", retval);
+
+            while (1)
+                ;
+        }
+    }
+    
+    printf("\n정리 중...\n");
+    pio_sm_set_enabled(pio_struct.pio, pio_struct.sm, false);
+    pio_remove_program(pio_struct.pio, &wizchip_pio_spi_quad_write_read_program, pio_struct.offset);
+    pio_sm_unclaim(pio_struct.pio, pio_struct.sm);
+    pio_close(pio_struct.pio);
+
+    printf("완료\n");
+    return 0;
+
+}
+// Main While loop 종료 핸들러
+void signal_handler(int sig) {
+    (void)sig;
+    printf("\n시그널 받음, 종료 중...\n");
+    pio_sm_set_enabled(pio_struct.pio, pio_struct.sm,false);
+    keep_running = 0;
+}
