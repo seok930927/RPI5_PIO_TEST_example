@@ -11,6 +11,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.25.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.25.1/CMakeSystem.cmake"
   "CMakeLists.txt"
+  "utils/piolib/CMakeLists.txt"
+  "utils/piolib/examples/CMakeLists.txt"
   "/usr/share/cmake-3.25/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.25/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake"
@@ -23,6 +25,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.25/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake"
   "/usr/share/cmake-3.25/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake-3.25/Modules/GNUInstallDirs.cmake"
   "/usr/share/cmake-3.25/Modules/Platform/Linux-GNU-C.cmake"
   "/usr/share/cmake-3.25/Modules/Platform/Linux-GNU-CXX.cmake"
   "/usr/share/cmake-3.25/Modules/Platform/Linux-GNU.cmake"
@@ -39,9 +42,25 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "utils/piolib/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "utils/piolib/examples/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/qspi_test.dir/DependInfo.cmake"
+  "utils/piolib/CMakeFiles/pio.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/apitest.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/piotest.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/piopwm.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/pioseq.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/piows2812.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/dpi_csync.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/rp1sm.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/quadenc.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/qspitest.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/toggletest.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/ws2812test.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/clock10mhz.dir/DependInfo.cmake"
+  "utils/piolib/examples/CMakeFiles/clocksimple.dir/DependInfo.cmake"
   )

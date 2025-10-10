@@ -32,7 +32,6 @@ CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: \
  /home/lihan/pio_qspi/qspi_pio/lib/ioLibrary_Driver/Ethernet/../Application/Application.h \
  /home/lihan/pio_qspi/qspi_pio/src/wizchip_spi.h \
  /home/lihan/pio_qspi/qspi_pio/include/board_list.h \
- /home/lihan/pio_qspi/qspi_pio/../wizchip_qspi_pio.h \
  /home/lihan/pio_qspi/qspi_pio/src/pio_func.h /usr/include/stdlib.h \
  /usr/include/aarch64-linux-gnu/bits/waitflags.h \
  /usr/include/aarch64-linux-gnu/bits/waitstatus.h \

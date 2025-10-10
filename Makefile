@@ -87,7 +87,7 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target list_install_components
 list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\" \"piolib\""
 .PHONY : list_install_components
 
 # Special rule for the target list_install_components
@@ -173,6 +173,188 @@ qspi_test: cmake_check_build_system
 qspi_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/qspi_test.dir/build.make CMakeFiles/qspi_test.dir/build
 .PHONY : qspi_test/fast
+
+#=============================================================================
+# Target rules for targets named pio
+
+# Build rule for target.
+pio: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pio
+.PHONY : pio
+
+# fast build rule for target.
+pio/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/CMakeFiles/pio.dir/build.make utils/piolib/CMakeFiles/pio.dir/build
+.PHONY : pio/fast
+
+#=============================================================================
+# Target rules for targets named apitest
+
+# Build rule for target.
+apitest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apitest
+.PHONY : apitest
+
+# fast build rule for target.
+apitest/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/apitest.dir/build.make utils/piolib/examples/CMakeFiles/apitest.dir/build
+.PHONY : apitest/fast
+
+#=============================================================================
+# Target rules for targets named piotest
+
+# Build rule for target.
+piotest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 piotest
+.PHONY : piotest
+
+# fast build rule for target.
+piotest/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/piotest.dir/build.make utils/piolib/examples/CMakeFiles/piotest.dir/build
+.PHONY : piotest/fast
+
+#=============================================================================
+# Target rules for targets named piopwm
+
+# Build rule for target.
+piopwm: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 piopwm
+.PHONY : piopwm
+
+# fast build rule for target.
+piopwm/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/piopwm.dir/build.make utils/piolib/examples/CMakeFiles/piopwm.dir/build
+.PHONY : piopwm/fast
+
+#=============================================================================
+# Target rules for targets named pioseq
+
+# Build rule for target.
+pioseq: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pioseq
+.PHONY : pioseq
+
+# fast build rule for target.
+pioseq/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/pioseq.dir/build.make utils/piolib/examples/CMakeFiles/pioseq.dir/build
+.PHONY : pioseq/fast
+
+#=============================================================================
+# Target rules for targets named piows2812
+
+# Build rule for target.
+piows2812: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 piows2812
+.PHONY : piows2812
+
+# fast build rule for target.
+piows2812/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/piows2812.dir/build.make utils/piolib/examples/CMakeFiles/piows2812.dir/build
+.PHONY : piows2812/fast
+
+#=============================================================================
+# Target rules for targets named dpi_csync
+
+# Build rule for target.
+dpi_csync: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dpi_csync
+.PHONY : dpi_csync
+
+# fast build rule for target.
+dpi_csync/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/dpi_csync.dir/build.make utils/piolib/examples/CMakeFiles/dpi_csync.dir/build
+.PHONY : dpi_csync/fast
+
+#=============================================================================
+# Target rules for targets named rp1sm
+
+# Build rule for target.
+rp1sm: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rp1sm
+.PHONY : rp1sm
+
+# fast build rule for target.
+rp1sm/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/rp1sm.dir/build.make utils/piolib/examples/CMakeFiles/rp1sm.dir/build
+.PHONY : rp1sm/fast
+
+#=============================================================================
+# Target rules for targets named quadenc
+
+# Build rule for target.
+quadenc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quadenc
+.PHONY : quadenc
+
+# fast build rule for target.
+quadenc/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/quadenc.dir/build.make utils/piolib/examples/CMakeFiles/quadenc.dir/build
+.PHONY : quadenc/fast
+
+#=============================================================================
+# Target rules for targets named qspitest
+
+# Build rule for target.
+qspitest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 qspitest
+.PHONY : qspitest
+
+# fast build rule for target.
+qspitest/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/qspitest.dir/build.make utils/piolib/examples/CMakeFiles/qspitest.dir/build
+.PHONY : qspitest/fast
+
+#=============================================================================
+# Target rules for targets named toggletest
+
+# Build rule for target.
+toggletest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 toggletest
+.PHONY : toggletest
+
+# fast build rule for target.
+toggletest/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/toggletest.dir/build.make utils/piolib/examples/CMakeFiles/toggletest.dir/build
+.PHONY : toggletest/fast
+
+#=============================================================================
+# Target rules for targets named ws2812test
+
+# Build rule for target.
+ws2812test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ws2812test
+.PHONY : ws2812test
+
+# fast build rule for target.
+ws2812test/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/ws2812test.dir/build.make utils/piolib/examples/CMakeFiles/ws2812test.dir/build
+.PHONY : ws2812test/fast
+
+#=============================================================================
+# Target rules for targets named clock10mhz
+
+# Build rule for target.
+clock10mhz: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clock10mhz
+.PHONY : clock10mhz
+
+# fast build rule for target.
+clock10mhz/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/clock10mhz.dir/build.make utils/piolib/examples/CMakeFiles/clock10mhz.dir/build
+.PHONY : clock10mhz/fast
+
+#=============================================================================
+# Target rules for targets named clocksimple
+
+# Build rule for target.
+clocksimple: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clocksimple
+.PHONY : clocksimple
+
+# fast build rule for target.
+clocksimple/fast:
+	$(MAKE) $(MAKESILENT) -f utils/piolib/examples/CMakeFiles/clocksimple.dir/build.make utils/piolib/examples/CMakeFiles/clocksimple.dir/build
+.PHONY : clocksimple/fast
 
 include/wizchip_qspi_pio.pio.o: include/wizchip_qspi_pio.pio.c.o
 .PHONY : include/wizchip_qspi_pio.pio.o
@@ -378,7 +560,21 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... apitest"
+	@echo "... clock10mhz"
+	@echo "... clocksimple"
+	@echo "... dpi_csync"
+	@echo "... pio"
+	@echo "... piopwm"
+	@echo "... pioseq"
+	@echo "... piotest"
+	@echo "... piows2812"
 	@echo "... qspi_test"
+	@echo "... qspitest"
+	@echo "... quadenc"
+	@echo "... rp1sm"
+	@echo "... toggletest"
+	@echo "... ws2812test"
 	@echo "... include/wizchip_qspi_pio.pio.o"
 	@echo "... include/wizchip_qspi_pio.pio.i"
 	@echo "... include/wizchip_qspi_pio.pio.s"

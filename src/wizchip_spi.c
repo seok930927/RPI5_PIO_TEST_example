@@ -16,13 +16,7 @@
 #include "wizchip_spi.h"
 #include "board_list.h"
 
-
-#include "wizchip_qspi_pio.h"
 #include "pio_func.h"
-// #include "pico/stdlib.h"
-// #include "pico/binary_info.h"
-// #include "pico/critical_section.h"
-// #include "hardware/dma.h"
 
 /**
     ----------------------------------------------------------------------------------------------------
@@ -42,6 +36,27 @@ static uint dma_rx;
 static dma_channel_config dma_channel_config_tx;
 static dma_channel_config dma_channel_config_rx;
 #endif
+
+
+// Opaque handle type (implemented as pointer to implementation state)
+typedef void *wiznet_spi_handle_t;
+
+// Function table used by higher-level code. Signatures chosen to match usages in
+// wizchip_qspi_pio.c and related files. Adjust implementations if types differ.
+typedef struct wiznet_spi_funcs {
+    void (*close)(wiznet_spi_handle_t handle);
+    void (*set_active)(wiznet_spi_handle_t handle);
+    void (*set_inactive)(void);
+    void (*frame_start)(void);
+    void (*frame_end)(void);
+    void (*read_byte)(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length);
+    void (*write_byte)(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length);
+    // Optional for some chips
+    void (*read_buffer)(uint8_t *rx, uint16_t len);
+    void (*write_buffer)(uint8_t *tx, uint16_t len);
+    void (*reset)(wiznet_spi_handle_t handle);
+} wiznet_spi_funcs_t;
+
 
 #ifdef USE_PIO
 #if   (_WIZCHIP_ == W6300)

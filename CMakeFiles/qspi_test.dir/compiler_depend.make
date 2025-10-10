@@ -475,7 +475,6 @@ CMakeFiles/qspi_test.dir/src/wizchip_spi.c.o: src/wizchip_spi.c \
   lib/ioLibrary_Driver/Application/Application.h \
   src/wizchip_spi.h \
   include/board_list.h \
-  /home/lihan/pio_qspi/wizchip_qspi_pio.h \
   src/pio_func.h \
   /usr/include/stdlib.h \
   /usr/include/aarch64-linux-gnu/bits/waitflags.h \
@@ -712,8 +711,6 @@ src/wizchip_spi.c:
 /usr/include/features.h:
 
 /usr/include/aarch64-linux-gnu/bits/long-double.h:
-
-/home/lihan/pio_qspi/wizchip_qspi_pio.h:
 
 /usr/include/stdint.h:
 

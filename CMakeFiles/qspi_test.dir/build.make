@@ -204,7 +204,7 @@ qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/wizchip_conf.c
 qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Application/loopback/loopback.c.o
 qspi_test: CMakeFiles/qspi_test.dir/lib/ioLibrary_Driver/Ethernet/W6300/w6300.c.o
 qspi_test: CMakeFiles/qspi_test.dir/build.make
-qspi_test: utils/piolib/build/libpio.a
+qspi_test: utils/piolib/libpio.a
 qspi_test: CMakeFiles/qspi_test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lihan/pio_qspi/qspi_pio/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable qspi_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/qspi_test.dir/link.txt --verbose=$(VERBOSE)

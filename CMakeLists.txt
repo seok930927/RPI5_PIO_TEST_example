@@ -25,18 +25,23 @@ add_executable(qspi_test
 target_include_directories(qspi_test PRIVATE 
     ${PIOLIB_PATH}/include
     include
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
     lib/ioLibrary_Driver/
     lib/ioLibrary_Driver/Ethernet
     lib/ioLibrary_Driver/Application/loopback
     
 )
 
+# piolib만 빌드 (다른 utils는 추가 의존성 필요)
+add_subdirectory(utils/piolib)
+
 # PIOLib 정적 라이브러리 링크
 target_link_libraries(qspi_test 
-    ${PIOLIB_PATH}/build/libpio.a
+    pio
     gpiod
 )
+
+# qspi_test가 piolib 빌드 완료 후에 빌드되도록 의존성 설정
+add_dependencies(qspi_test pio)
 
 # 컴파일 옵션
 target_compile_options(qspi_test PRIVATE -Wall -Wextra -O0)
