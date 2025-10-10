@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/qspi_test_clean.dir/src/qspi_test_clean.c.o -o qspi_test_clean  -lgpiod 

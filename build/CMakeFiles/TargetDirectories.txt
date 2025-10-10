@@ -1,7 +1,0 @@
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/qspi_test.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/edit_cache.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/rebuild_cache.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/list_install_components.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/install.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/install/local.dir
-/home/lihan/pio_qspi/qspi_pio/build/CMakeFiles/install/strip.dir
