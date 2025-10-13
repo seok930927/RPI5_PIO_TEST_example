@@ -112,7 +112,12 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
     pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
     pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
 
-
+    pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, 1024,1);  // 9개, 4바이트 단위
+    pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, 1024,4);  // 9개, 4바이트 단위
+         for (int i = 0; i < 4; i++) {
+            pio_gpio_init(pioStruct->pio, QSPI_DATA_IO0_PIN + i);
+        }
+        pio_gpio_init(pioStruct->pio, QSPI_CLOCK_PIN);
     // 데이터 핀 풀다운 및 슈미트 트리거 활성화
     for (int i = 0; i < 4; i++) {
         gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
@@ -127,28 +132,21 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         // SM 비활성화하고 재설정
         pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
 
-        // FIFO 클리어
-        pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
+        // // FIFO 클리어
+        // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
 
-        // PIO 재시작
-        pio_sm_restart(pioStruct->pio, pioStruct->sm);
-        pio_sm_clkdiv_restart(pioStruct->pio, pioStruct->sm);
+        // // PIO 재시작
+        // pio_sm_restart(pioStruct->pio, pioStruct->sm);
+        // pio_sm_clkdiv_restart(pioStruct->pio, pioStruct->sm);
                 // X레지스터 길이 지정 - X는  Max loop count        
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm,  PIO_DIR_TO_SM, tx_size,1);  // 9개, 4바이트 단위
-        if (rx_size > 0) {
 
-        pio_sm_config_xfer(pioStruct->pio, pioStruct->sm, PIO_DIR_FROM_SM, rx_size,4);  // 9개, 4바이트 단위
-        }
 
-        sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
-        sm_config_set_in_pins(&pioStruct->c, QSPI_DATA_IO0_PIN);        // 입력 핀
-        sm_config_set_set_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // set pins도 데이터 핀으로 설정
+        // sm_config_set_out_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // 데이터 핀: GPIO 20-23
+        // sm_config_set_in_pins(&pioStruct->c, QSPI_DATA_IO0_PIN);        // 입력 핀
+        // sm_config_set_set_pins(&pioStruct->c, QSPI_DATA_IO0_PIN, 4);    // set pins도 데이터 핀으로 설정
         // PIO 기능으로 GPIO 핀 설정
-        for (int i = 0; i < 4; i++) {
-            pio_gpio_init(pioStruct->pio, QSPI_DATA_IO0_PIN + i);
-        }
-        pio_gpio_init(pioStruct->pio, QSPI_CLOCK_PIN);
+   
         // 핀 방향 설정 (출력으로)
         pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
         pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
@@ -216,7 +214,7 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
 
 
 
-__attribute__((optimize("O0")))
+// __attribute__((optimize("O0")))
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length){
 
     uint32_t cmd[2048] ={0,};
@@ -275,7 +273,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
 
 }
 
-__attribute__((optimize("O0")))
+// __attribute__((optimize("O0")))
 
 
 void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint32_t *tx, uint16_t tx_length){
