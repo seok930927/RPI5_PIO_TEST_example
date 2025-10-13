@@ -11,18 +11,48 @@ typedef struct {
     int result;
 } xfer_thread_args_t;
 
+// 전역 쓰레드 미리 생성 (한 번만)
+static pthread_t global_tx_thread, global_rx_thread;
+static xfer_thread_args_t global_tx_args, global_rx_args;
+static volatile bool tx_ready = false, rx_ready = false;
+static volatile bool tx_done = false, rx_done = false;
+static bool threads_initialized = false;
+
 void* tx_thread_func(void* arg) {
-    xfer_thread_args_t *args = (xfer_thread_args_t*)arg;
-    args->result = pio_sm_xfer_data(args->pio, args->sm,PIO_DIR_TO_SM, 
-                                     args->byte_count, args->buffer);
+    while (1) {
+        // 작업 대기
+        while (!tx_ready) { usleep(1); }
+        
+        // 작업 수행
+        global_tx_args.result = pio_sm_xfer_data(global_tx_args.pio, global_tx_args.sm, PIO_DIR_TO_SM, 
+                                                 global_tx_args.byte_count, global_tx_args.buffer);
+        tx_ready = false;
+        tx_done = true;
+    }
     return NULL;
 }
 
 void* rx_thread_func(void* arg) {
-    xfer_thread_args_t *args = (xfer_thread_args_t*)arg;
-    args->result = pio_sm_xfer_data(args->pio, args->sm, PIO_DIR_FROM_SM, 
-                                     args->byte_count, args->buffer);
+    while (1) {
+        // 작업 대기
+        while (!rx_ready) { usleep(1); }
+        
+        // 작업 수행
+        global_rx_args.result = pio_sm_xfer_data(global_rx_args.pio, global_rx_args.sm, PIO_DIR_FROM_SM, 
+                                                 global_rx_args.byte_count, global_rx_args.buffer);
+        rx_ready = false;
+        rx_done = true;
+    }
     return NULL;
+}
+
+// 쓰레드 초기화 (한 번만 호출)
+void init_threads_once() {
+    if (!threads_initialized) {
+        pthread_create(&global_tx_thread, NULL, tx_thread_func, NULL);
+        pthread_create(&global_rx_thread, NULL, rx_thread_func, NULL);
+        threads_initialized = true;
+    }
 }
 
 
@@ -124,13 +154,16 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
         gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
     }
     pio_sm_init(pioStruct->pio, pioStruct->sm, pioStruct->offset, &pioStruct->c);
+
+
+
 }
 
 void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t tx_size   ,uint32_t rx_size) {
 
-    if (enable) {
+    // if (enable) {
         // SM 비활성화하고 재설정
-        pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
+        // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
 
         // // FIFO 클리어
         // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
@@ -148,16 +181,18 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         // PIO 기능으로 GPIO 핀 설정
    
         // 핀 방향 설정 (출력으로)
-        pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
-        pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
 
 
-        for (int i = 0; i < 4; i++)
-        {
-            gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
-            gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
-        }
+
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
+        //     gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
+        // }
         
+    // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
+    // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
+
         pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
@@ -180,13 +215,13 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
         }
 
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
-        pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
+        // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
+        // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
 
-    } else {
-           // SM 비활성화
-        pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
-    }
+    // } else {
+    //        // SM 비활성화
+    //     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
+    // }
 
 }
 
@@ -234,42 +269,41 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
         cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
     }   
 
-    // 쓰레드 인자 준비
-    xfer_thread_args_t tx_args = {
-        .pio = pioStruct->pio,
-        .sm = pioStruct->sm,
-        
-        .byte_count = cmd_size,
-        .buffer = cmd,
-        .result = 0
-    };
+    init_threads_once();
     
-    xfer_thread_args_t rx_args = {
-        .pio = pioStruct->pio,
-        .sm = pioStruct->sm,
-        .byte_count = rx_length,
-        .buffer = recv_buf_32,
-        .result = 0
-    };
+    // 전역 쓰레드에 작업 할당
+    global_tx_args.pio = pioStruct->pio;
+    global_tx_args.sm = pioStruct->sm;
+    global_tx_args.byte_count = cmd_size;
+    global_tx_args.buffer = cmd;
     
-    pthread_t tx_thread, rx_thread;
-
+    global_rx_args.pio = pioStruct->pio;
+    global_rx_args.sm = pioStruct->sm;
+    global_rx_args.byte_count = rx_length;
+    global_rx_args.buffer = recv_buf_32;
 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
-    // RX  TX DMA 동시에 할당시작 
-    pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX DMA 할당시작 
-    pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX DMA 할당시작
-    // 두 쓰레드 완료 대기
-    pthread_join(rx_thread, NULL);
-    pthread_join(tx_thread, NULL);
+    
+    // 작업 시작 (쓰레드 생성 없이!)
+    // clock_gettime(CLOCK_MONOTONIC, &start);
+    tx_done = false;
+    rx_done = false;
+    tx_ready = true;  // TX 시작
+    rx_ready = true;  // RX 시작
+    
+    // 완료 대기
+    while (!tx_done || !rx_done) {
+        usleep(1);  // 1μs 대기
+    }
     
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+    
     
     for(int i=0; i< rx_length ; i++){
         rx[i] = ((((uint8_t*)recv_buf_32)[i] &0x0f) << 4 | (((uint8_t*)recv_buf_32)[i] &0xf0)>>4);
     }
 
-    __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
+    // __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
 }
 

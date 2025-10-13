@@ -79,12 +79,13 @@ public read_bits_end:
 .side_set 1
 wiznet_ready: 
     jmp !x read_bits_fin    side 0
+    set pindirs 15          side 0  ; 4개 핀 모두 출력 (1111 binary = 15)
 write_bits: 
     out pins, 4             side 0
     jmp x-- write_bits      side 1
     set pins 0              side 0
 read_byte_delay:
-    set pindirs 0           side 0
+    set pindirs 0           side 0  ; 4개 핀 모두 입력 (0000 binary = 0)
 write_bits_end:
     jmp !y read_bits_fin    side 0 
 read_byte:

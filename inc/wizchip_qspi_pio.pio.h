@@ -148,33 +148,34 @@ static inline pio_sm_config wizchip_pio_spi_dual_write_read_program_get_default_
 // ------------------------------- //
 
 #define wizchip_pio_spi_quad_write_read_wrap_target 0
-#define wizchip_pio_spi_quad_write_read_wrap 12
+#define wizchip_pio_spi_quad_write_read_wrap 13
 #define wizchip_pio_spi_quad_write_read_pio_version 0
 
-#define wizchip_pio_spi_quad_write_read_offset_read_bits_end 13u
+#define wizchip_pio_spi_quad_write_read_offset_read_bits_end 14u
 
 static const uint16_t wizchip_pio_spi_quad_write_read_program_instructions[] = {
             //     .wrap_target
-    0x002c, //  0: jmp    !x, 12          side 0
-    0x6004, //  1: out    pins, 4         side 0
-    0x1041, //  2: jmp    x--, 1          side 1
-    0xe000, //  3: set    pins, 0         side 0
-    0xe080, //  4: set    pindirs, 0      side 0
-    0x006c, //  5: jmp    !y, 12          side 0
-    0xf020, //  6: set    x, 0            side 1
-    0x4004, //  7: in     pins, 4         side 0
-    0x1087, //  8: jmp    y--, 7          side 1
-    0xe000, //  9: set    pins, 0         side 0
+    0x002d, //  0: jmp    !x, 13          side 0
+    0xe08f, //  1: set    pindirs, 15     side 0
+    0x6004, //  2: out    pins, 4         side 0
+    0x1042, //  3: jmp    x--, 2          side 1
+    0xe000, //  4: set    pins, 0         side 0
+    0xe080, //  5: set    pindirs, 0      side 0
+    0x006d, //  6: jmp    !y, 13          side 0
+    0xf020, //  7: set    x, 0            side 1
+    0x4004, //  8: in     pins, 4         side 0
+    0x1088, //  9: jmp    y--, 8          side 1
     0xe000, // 10: set    pins, 0         side 0
     0xe000, // 11: set    pins, 0         side 0
     0xe000, // 12: set    pins, 0         side 0
+    0xe000, // 13: set    pins, 0         side 0
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program wizchip_pio_spi_quad_write_read_program = {
     .instructions = wizchip_pio_spi_quad_write_read_program_instructions,
-    .length = 13,
+    .length = 14,
     .origin = -1,
     .pio_version = wizchip_pio_spi_quad_write_read_pio_version,
 #if PICO_PIO_VERSION > 0
