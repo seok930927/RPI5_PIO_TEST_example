@@ -47,12 +47,20 @@ void* rx_thread_func(void* arg) {
 }
 
 // 쓰레드 초기화 (한 번만 호출)
-void init_threads_once() {
+void init_threads_once(struct pio_struct_Lihan *pioStruct  ) {
     if (!threads_initialized) {
         pthread_create(&global_tx_thread, NULL, tx_thread_func, NULL);
         pthread_create(&global_rx_thread, NULL, rx_thread_func, NULL);
         threads_initialized = true;
     }
+
+    global_tx_args.pio = pioStruct->pio;
+    global_tx_args.sm = pioStruct->sm;
+        
+    global_rx_args.pio = pioStruct->pio;
+    global_rx_args.sm = pioStruct->sm;
+
+
 }
 
 
@@ -159,9 +167,32 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
 }
 
+
+#if 0
+void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable, uint32_t tx_size, uint32_t rx_size) {
+    // 1. 값들을 미리 계산
+    uint32_t x_value = (tx_size * 2) - 1;
+    uint32_t y_value = (rx_size > 0) ? (rx_size * 2) - 1 : 0;
+    
+    // 2. FIFO에 두 값을 넣기
+    pio_sm_put(pioStruct->pio, pioStruct->sm, x_value);
+    pio_sm_put(pioStruct->pio, pioStruct->sm, y_value);
+    
+    // 3. X 레지스터 설정 (blocking으로 안전하게)
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true)); // blocking!
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));
+    
+    // 4. Y 레지스터 설정 (blocking으로 안전하게)
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true)); // blocking!
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));
+    
+    // 5. 마지막 out 명령어 완전 제거!
+    // pio_sm_exec(..., pio_encode_out(pio_null, 32)); // 제거!
+}
+#else
 void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t tx_size   ,uint32_t rx_size) {
 
-    // if (enable) {
+   // if (enable) {
         // SM 비활성화하고 재설정
         // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
 
@@ -193,24 +224,20 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
     // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
     // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
 
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
+        pio_sm_put(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
 
         if (rx_size > 0) {
-
-            // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 ) ;               // TX FIFO <= 값
+            pio_sm_put(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 ) ;               // TX FIFO <= 값
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
-
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
         }else{
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
+            pio_sm_put(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
-
             pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
 
         }
@@ -224,7 +251,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
     // }
 
 }
-
+#endif 
 
 
 void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length) {
@@ -269,16 +296,12 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
         cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
     }   
 
-    init_threads_once();
+    init_threads_once(pioStruct);
     
     // 전역 쓰레드에 작업 할당
-    global_tx_args.pio = pioStruct->pio;
-    global_tx_args.sm = pioStruct->sm;
     global_tx_args.byte_count = cmd_size;
     global_tx_args.buffer = cmd;
-    
-    global_rx_args.pio = pioStruct->pio;
-    global_rx_args.sm = pioStruct->sm;
+
     global_rx_args.byte_count = rx_length;
     global_rx_args.buffer = recv_buf_32;
 
