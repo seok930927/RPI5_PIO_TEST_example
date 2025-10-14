@@ -77,19 +77,39 @@ public read_bits_end:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .program wizchip_pio_spi_quad_write_read
 .side_set 1
-wiznet_ready: 
+
+wiznet_ready:
+    set x 0                 side 0
+    set y 0                 side 0
+
+    pull block              side 0
+    nop [4]                 side 0      ; 파이프라인 안정화용
+    mov x, osr              side 0
+    out null, 32            side 0      ; OSR의 잔여값(Y)을 완전히 버림
+
+    pull block              side 0
+    nop [4]                 side 0      ; 파이프라인 안정화용
+    mov y, osr              side 0
+    out null, 32            side 0      ; OSR의 잔여값(Y)을 완전히 버림
+    nop [4]                 side 0      ; 파이프라인 안정화용
+
     jmp !x read_bits_fin    side 0
-write_bits: 
+    set pindirs 15          side 0      ; 4개 핀 모두 출력 (1111 binary = 15)
+
+write_bits:
     out pins, 4             side 0
     jmp x-- write_bits      side 1
     set pins 0              side 0
 read_byte_delay:
-    set pindirs 0           side 0
+    set pindirs 0           side 0      ; 4개 핀 모두 입력 (0000 binary = 0)
+
 write_bits_end:
     jmp !y read_bits_fin    side 0 
 read_byte:
     set x 0                 side 1
+
 read_bits:
+    set pins 0              side 0 
     in pins, 4              side 0 
     jmp y-- read_bits       side 1
     set pins 0              side 0 
@@ -97,10 +117,5 @@ read_bits:
     set pins 0              side 0 
 read_bits_fin:    
     set pins 0              side 0
-
-
-     
- 
-     
 
 public read_bits_end:

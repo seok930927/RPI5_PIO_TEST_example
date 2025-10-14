@@ -84,7 +84,10 @@ int main() {
     wizchip_initialize();
 
     sleep(1);
-    printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+    while(0){
+        printf("->>>>>>>>>>>>>>>>>>>%04x\n", getCIDR());
+        usleep(1000);
+    }
 
     network_initialize(g_net_info);
     print_network_information(g_net_info);

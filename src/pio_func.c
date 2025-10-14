@@ -130,7 +130,7 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
     if (enable) {
         // SM 비활성화하고 재설정
-        pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
+        // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
 
         // // FIFO 클리어
         // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
@@ -158,27 +158,27 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
             gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
         }
         
-        pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+        // pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
+        // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+        // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_x, pio_osr));   // X <= OSR
+        // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
 
-        if (rx_size > 0) {
+        // if (rx_size > 0) {
 
-            // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 ) ;               // TX FIFO <= 값
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
+        //     // pio_sm_exec(pio_struct.pio, pio_struct.sm,pio_encode_jmp(pio_struct.offset+5));   // offset == 0번지
+        //     pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (rx_size*2) -1 ) ;               // TX FIFO <= 값
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
-        }else{
-            pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+        // }else{
+        //     pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, 0 );               // TX FIFO <= 값
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_mov(pio_y, pio_osr));   // X <= OSR
 
-            pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
+        //     pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_out(pio_null, 32));     // OSR의 32비트를 그냥 폐기
 
-        }
+        // }
 
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
         pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
@@ -199,6 +199,7 @@ void wiznet_spi_pio_read_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *rx, ui
     pio_read_byte(&pio_struct, op_code, AddrSel, rx, rx_length);
 
 }
+
 void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, uint16_t tx_length) {
     uint32_t tx_convert32[2048] = {0,};
     uint8_t tx_convert8[2048] = {0,};
@@ -229,6 +230,12 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     }   
 
     pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length); // 80바이트 전송 준비
+    ((uint8_t*)cmd)[0]= (((cmd_size-8) *2) &0xff) -1;
+    ((uint8_t*)cmd)[4]= ((rx_length *2) &0xff) -1;
+    // cmd[0]= 13;
+    // cmd[4]= 7;
+    // printf("cmd_size: %d, rx_length: %d\r\n", cmd_size, rx_length);
+    // printf("cmd[0]: 0x%0d, cmd[4]: 0x%0d\r\n", ((uint8_t*)cmd)[0], ((uint8_t*)cmd)[4]);
 
     if (cmd_size % 4 != 0) {
         cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
@@ -255,10 +262,10 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     pthread_t tx_thread, rx_thread;
 
 
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     // RX  TX DMA 동시에 할당시작 
     pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX DMA 할당시작 
     pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX DMA 할당시작
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
     // 두 쓰레드 완료 대기
     pthread_join(rx_thread, NULL);
     pthread_join(tx_thread, NULL);
@@ -267,6 +274,7 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     
     for(int i=0; i< rx_length ; i++){
         rx[i] = ((((uint8_t*)recv_buf_32)[i] &0x0f) << 4 | (((uint8_t*)recv_buf_32)[i] &0xf0)>>4);
+        // printf("0x%02X ", rx[i]);
     }
 
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
@@ -289,6 +297,8 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     }   
     
     pio_init_lihan(pioStruct, true,  cmd_size ,0);
+    // cmd[0]= (cmd_size *2) &0xff -1;
+    ((uint8_t*)cmd)[0]= (((cmd_size-8) *2) &0xff) -1;
     int sent = 0 ; 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
@@ -316,19 +326,29 @@ static uint8_t mk_cmd_buf_lihan(uint8_t *pdst, uint8_t opcode, uint16_t addr) {
 
     return 4 + 1;
 #elif (_WIZCHIP_QSPI_MODE_ == QSPI_QUAD_MODE)
-    pdst[0] = ((opcode >> 6 & 0x01) << (4)) | ((opcode >> 7 & 0x01) << (0));
-    pdst[1] = ((opcode >> 4 & 0x01) << (4)) | ((opcode >> 5 & 0x01) << (0));
-    pdst[2] = ((opcode >> 2 & 0x01) << (4)) | ((opcode >> 3 & 0x01) << (0));
-    pdst[3] = ((opcode >> 0 & 0x01) << (4)) | ((opcode >> 1 & 0x01) << (0));
+    // pdst[0] = 13;
+    pdst[0] = 0;
+    pdst[1] = 0;
+    pdst[2] = 0;
+    pdst[3] = 0;
+    pdst[4] = 0;
+    pdst[5] = 0;
+    pdst[6] = 0;
+    pdst[7] = 0;
 
-    pdst[4] = ((uint8_t)(addr >> 8) & 0xF0 )>>4 |((uint8_t)(addr >> 8) & 0xf ) << 4   ;
-    pdst[5] = ((uint8_t)(addr >> 0) & 0xF0 )>>4 |((uint8_t)(addr >> 0) & 0xF ) << 4   ;
-    pdst[6] = 0 << (0);
+    pdst[8] = ((opcode >> 6 & 0x01) << (4)) | ((opcode >> 7 & 0x01) << (0));
+    pdst[9] = ((opcode >> 4 & 0x01) << (4)) | ((opcode >> 5 & 0x01) << (0));
+    pdst[10] = ((opcode >> 2 & 0x01) << (4)) | ((opcode >> 3 & 0x01) << (0));
+    pdst[11] = ((opcode >> 0 & 0x01) << (4)) | ((opcode >> 1 & 0x01) << (0));
+
+    pdst[12] = ((uint8_t)(addr >> 8) & 0xF0 )>>4 |((uint8_t)(addr >> 8) & 0xf ) << 4   ;
+    pdst[13] = ((uint8_t)(addr >> 0) & 0xF0 )>>4 |((uint8_t)(addr >> 0) & 0xF ) << 4   ;
+    pdst[14] = 0 << (0);
 
 
 #if false
 #endif
-    return 6 + 1;
+    return 6 + 8 + 1;
 #endif
     return 0;
 }
