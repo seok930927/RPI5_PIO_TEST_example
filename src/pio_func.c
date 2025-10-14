@@ -128,7 +128,6 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
 
 void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t tx_size   ,uint32_t rx_size) {
 
-    if (enable) {
         // SM 비활성화하고 재설정
         // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
 
@@ -148,15 +147,15 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         // PIO 기능으로 GPIO 핀 설정
    
         // 핀 방향 설정 (출력으로)
-        pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
-        pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
+        // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_DATA_IO0_PIN, 4, true);
+        // pio_sm_set_consecutive_pindirs(pioStruct->pio, pioStruct->sm, QSPI_CLOCK_PIN, 1, true);
 
 
-        for (int i = 0; i < 4; i++)
-        {
-            gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
-            gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
-        }
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     gpio_set_pulls(QSPI_DATA_IO0_PIN + i, true, true);
+        //     gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
+        // }
         
         // pio_sm_put_blocking(pioStruct->pio, pioStruct->sm, (tx_size *2  ) -1  );               // TX FIFO <= 값
         // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_pull(false, true));     // OSR <= TX FIFO
@@ -183,10 +182,6 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
         pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
         pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
 
-    } else {
-           // SM 비활성화
-        pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, false);
-    }
 
 }
 
@@ -230,8 +225,14 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     }   
 
     pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length); // 80바이트 전송 준비
-    ((uint8_t*)cmd)[0]= (((cmd_size-8) *2) &0xff) -1;
-    ((uint8_t*)cmd)[4]= ((rx_length *2) &0xff) -1;
+    uint32_t cmd_len = ((cmd_size-8) *2)  - 1 ;
+    uint32_t rx_len = (rx_length *2)  - 1 ;
+
+    ((uint8_t*)cmd)[0]= (uint8_t)(cmd_len &0xff) ;
+    ((uint8_t*)cmd)[1]= (uint8_t)((cmd_len &0xff00) >>8) ;
+    ((uint8_t*)cmd)[4]= (uint8_t)(rx_len &0xff) ;
+    ((uint8_t*)cmd)[5]= (uint8_t)((rx_len &0xff00) >>8) ;
+
     // cmd[0]= 13;
     // cmd[4]= 7;
     // printf("cmd_size: %d, rx_length: %d\r\n", cmd_size, rx_length);
@@ -298,7 +299,10 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     
     pio_init_lihan(pioStruct, true,  cmd_size ,0);
     // cmd[0]= (cmd_size *2) &0xff -1;
-    ((uint8_t*)cmd)[0]= (((cmd_size-8) *2) &0xff) -1;
+    uint32_t cmd_len = ((cmd_size-8) *2)  - 1 ;
+    ((uint8_t*)cmd)[0]= cmd_len &0xff ;
+    ((uint8_t*)cmd)[1]= cmd_len &0xff00 >>8 ;
+
     int sent = 0 ; 
     pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
