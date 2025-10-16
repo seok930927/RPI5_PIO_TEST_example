@@ -1,5 +1,41 @@
 #include "pio_func.h"
 
+// 타이밍 측정 매크로 (디버그용)
+#define ENABLE_TIMING_DEBUG  // 이 줄을 주석 해제하면 타이밍 측정 활성화
+
+#ifdef ENABLE_TIMING_DEBUG
+    #define TIMING_START(name) \
+        struct timespec timing_start_##name, timing_end_##name; \
+        clock_gettime(CLOCK_MONOTONIC, &timing_start_##name);
+
+    #define TIMING_END(name) \
+        clock_gettime(CLOCK_MONOTONIC, &timing_end_##name); \
+        long timing_##name = (timing_end_##name.tv_sec - timing_start_##name.tv_sec) * 1000000 + \
+                             (timing_end_##name.tv_nsec - timing_start_##name.tv_nsec) / 1000;
+
+    #define TIMING_PRINT(name, description) \
+        printf("%s: %ldμs\n", description, timing_##name);
+
+    #define TIMING_PRINT_TOTAL() \
+        printf("=== pio_read_byte 타이밍 분석 ===\n"); \
+        printf("Phase1(초기설정): %ldμs\n", timing_phase1); \
+        printf("Phase2(PIO설정): %ldμs\n", timing_phase2); \
+        printf("Phase3(명령어설정): %ldμs\n", timing_phase3); \
+        printf("Phase4(쓰레드준비): %ldμs\n", timing_phase4); \
+        printf("Phase5(쓰레드생성): %ldμs\n", timing_phase5); \
+        printf("Phase6(PIO활성화): %ldμs\n", timing_phase6); \
+        printf("Phase7(DMA전송): %ldμs\n", timing_phase7); \
+        printf("Phase8(PIO비활성화): %ldμs\n", timing_phase8); \
+        printf("Phase9(데이터변환): %ldμs\n", timing_phase9); \
+        printf("Total: %ldμs\n", timing_total); \
+        printf("==============================\n");
+#else
+    #define TIMING_START(name)
+    #define TIMING_END(name)
+    #define TIMING_PRINT(name, description)
+    #define TIMING_PRINT_TOTAL()
+#endif
+
 struct pio_struct_Lihan pio_struct; // <-- 이 줄 추가
 
 typedef struct {
@@ -124,6 +160,9 @@ int pio_open_lihan(struct pio_struct_Lihan *pioStruct) {
         gpio_set_input_enabled(QSPI_DATA_IO0_PIN + i, true);
     }
     pio_sm_init(pioStruct->pio, pioStruct->sm, pioStruct->offset, &pioStruct->c);
+
+    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+
 }
 
 void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t tx_size   ,uint32_t rx_size) {
@@ -179,8 +218,8 @@ void pio_init_lihan(struct pio_struct_Lihan *pioStruct, bool enable , uint32_t t
 
         // }
 
-        pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
-        pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
+        // pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
+        // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
 
 
 }
@@ -212,19 +251,25 @@ void wiznet_spi_pio_write_byte(uint8_t op_code, uint16_t AddrSel, uint8_t *tx, u
 
 // __attribute__((optimize("O0")))
 void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t AddrSel, uint8_t *rx, uint16_t rx_length){
+    // 전체 함수 시작
 
     uint32_t cmd[2048] ={0,};
     uint32_t cmd2[2048] ={0,};
     uint32_t recv_buf_32[2048] ={0,};  
       int recv = 0 ; 
     
+    // Phase 1: 초기 설정 및 cmd 버퍼 생성
     uint8_t cmd_size = mk_cmd_buf_lihan((uint8_t*)cmd, op_code, AddrSel);
 
     if (rx_length % 4 != 0) {
         rx_length += 4 - (rx_length % 4); // 4의 배수로 맞춤
     }   
 
-    pio_init_lihan(pioStruct, true, (uint32_t)cmd_size, rx_length); // 80바이트 전송 준비
+    // Phase 2: PIO 초기 설정 (jump, clear fifos)
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
+    // pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
+
+    // Phase 3: 명령어 길이 계산 및 설정
     uint32_t cmd_len = ((cmd_size-8) *2)  - 1 ;
     uint32_t rx_len = (rx_length *2)  - 1 ;
 
@@ -233,20 +278,14 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     ((uint8_t*)cmd)[4]= (uint8_t)(rx_len &0xff) ;
     ((uint8_t*)cmd)[5]= (uint8_t)((rx_len &0xff00) >>8) ;
 
-    // cmd[0]= 13;
-    // cmd[4]= 7;
-    // printf("cmd_size: %d, rx_length: %d\r\n", cmd_size, rx_length);
-    // printf("cmd[0]: 0x%0d, cmd[4]: 0x%0d\r\n", ((uint8_t*)cmd)[0], ((uint8_t*)cmd)[4]);
-
     if (cmd_size % 4 != 0) {
         cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
     }   
 
-    // 쓰레드 인자 준비
+    // Phase 4: 쓰레드 인자 준비
     xfer_thread_args_t tx_args = {
         .pio = pioStruct->pio,
         .sm = pioStruct->sm,
-        
         .byte_count = cmd_size,
         .buffer = cmd,
         .result = 0
@@ -262,22 +301,24 @@ void pio_read_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_t
     
     pthread_t tx_thread, rx_thread;
 
+    // Phase 5: 쓰레드 생성
+    pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);
+    pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);
 
-    // RX  TX DMA 동시에 할당시작 
-    pthread_create(&rx_thread, NULL, rx_thread_func, &rx_args);  // RX DMA 할당시작 
-    pthread_create(&tx_thread, NULL, tx_thread_func, &tx_args);  // TX DMA 할당시작
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
-    // 두 쓰레드 완료 대기
+    // Phase 6: PIO 활성화
+    // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,true);
+
+    // Phase 7: 쓰레드 완료 대기 (실제 DMA 전송)
     pthread_join(rx_thread, NULL);
     pthread_join(tx_thread, NULL);
-    
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
-    
+
+    // Phase 8: PIO 비활성화
+    // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+
+    // Phase 9: 데이터 변환
     for(int i=0; i< rx_length ; i++){
         rx[i] = ((((uint8_t*)recv_buf_32)[i] &0x0f) << 4 | (((uint8_t*)recv_buf_32)[i] &0xf0)>>4);
-        // printf("0x%02X ", rx[i]);
     }
-
     __asm__ __volatile__("" ::: "memory");  // 메모리 배리어
 
 }
@@ -296,20 +337,20 @@ void pio_write_byte(struct pio_struct_Lihan *pioStruct, uint8_t op_code, uint16_
     if (cmd_size % 4 != 0) {
         cmd_size += 4 - (cmd_size % 4); // 4의 배수로 맞춤
     }   
-    
-    pio_init_lihan(pioStruct, true,  cmd_size ,0);
+    pio_sm_exec(pioStruct->pio, pioStruct->sm, pio_encode_jmp(pioStruct->offset));
+    pio_sm_clear_fifos(pioStruct->pio, pioStruct->sm);
     // cmd[0]= (cmd_size *2) &0xff -1;
     uint32_t cmd_len = ((cmd_size-8) *2)  - 1 ;
     ((uint8_t*)cmd)[0]= cmd_len &0xff ;
     ((uint8_t*)cmd)[1]= cmd_len &0xff00 >>8 ;
 
     int sent = 0 ; 
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
+    // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm, true);
 
     pio_sm_xfer_data(pioStruct->pio, pioStruct->sm, PIO_DIR_TO_SM, cmd_size , cmd );
 
 
-    pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
+    // pio_sm_set_enabled(pioStruct->pio, pioStruct->sm,false);
 
 }
 
